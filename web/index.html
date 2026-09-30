@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>PTT MacShop iPhone 價格與成交行情分析儀表板</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="styles.css?v=2.3">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-sky-500 selection:text-white">
+
+  <!-- Top Navbar -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-sky-500/20">
+          <i data-lucide="smartphone" class="w-5 h-5 text-white"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
+            PTT MacShop iPhone 行情雷達
+          </h1>
+          <p class="text-xs text-slate-400">近 2 年二手市場掛售與成交行情分析 (iPhone 13 ~ 18)</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-3">
+        <span id="update-badge" class="hidden sm:inline-flex items-center text-xs px-2.5 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+          <i data-lucide="clock" class="w-3.5 h-3.5 mr-1 text-sky-400"></i>
+          <span id="updated-at">載入中...</span>
+        </span>
+        <button onclick="exportCSV()" class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 transition">
+          <i data-lucide="download" class="w-3.5 h-3.5 mr-1.5 text-sky-400"></i> 匯出 CSV
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Category Tab Switcher Bar -->
+  <div class="border-b border-slate-800 bg-slate-900/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="flex space-x-4">
+        <button id="tab-iphone" onclick="switchCategory('iphone')" class="category-tab py-3.5 px-4 text-sm font-semibold border-b-2 border-sky-500 text-sky-400 flex items-center transition">
+          <i data-lucide="smartphone" class="w-4 h-4 mr-2"></i>
+          iPhone 系列 (13 ~ 18)
+          <span id="tab-iphone-count" class="ml-2 px-2 py-0.5 text-[11px] rounded-full bg-sky-500/20 text-sky-300">--</span>
+        </button>
+        <button id="tab-ipad" onclick="switchCategory('ipad_mini')" class="category-tab py-3.5 px-4 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center transition">
+          <i data-lucide="tablet" class="w-4 h-4 mr-2"></i>
+          iPad mini 系列 (mini 6 & 7)
+          <span id="tab-ipad-count" class="ml-2 px-2 py-0.5 text-[11px] rounded-full bg-slate-800 text-slate-400">--</span>
+        </button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Time Range Control Bar -->
+  <div class="border-b border-slate-800/80 bg-slate-900/70 backdrop-blur sticky top-16 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="text-xs font-semibold text-slate-300 flex items-center mr-1">
+          <i data-lucide="calendar-range" class="w-4 h-4 mr-1.5 text-purple-400"></i>
+          時間範圍：
+        </span>
+        <div class="flex flex-wrap items-center gap-1.5" id="date-preset-buttons">
+          <button type="button" onclick="setDatePreset('all')" class="date-preset-btn cursor-pointer px-2.5 py-1 text-xs rounded-lg font-semibold bg-purple-600 text-white transition shadow-sm active:scale-95" data-preset="all">全部 (近2年)</button>
+          <button type="button" onclick="setDatePreset('1y')" class="date-preset-btn cursor-pointer px-2.5 py-1 text-xs rounded-lg font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition active:scale-95" data-preset="1y">近 1 年</button>
+          <button type="button" onclick="setDatePreset('6m')" class="date-preset-btn cursor-pointer px-2.5 py-1 text-xs rounded-lg font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition active:scale-95" data-preset="6m">近半年</button>
+          <button type="button" onclick="setDatePreset('90d')" class="date-preset-btn cursor-pointer px-2.5 py-1 text-xs rounded-lg font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition active:scale-95" data-preset="90d">近 90 天</button>
+          <button type="button" onclick="setDatePreset('30d')" class="date-preset-btn cursor-pointer px-2.5 py-1 text-xs rounded-lg font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition active:scale-95" data-preset="30d">近 30 天</button>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="flex items-center bg-slate-800/90 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-slate-200 shadow-inner">
+          <span class="text-slate-400 text-[11px] mr-1.5">自訂區間</span>
+          <input type="date" id="date-start" onchange="onCustomDateChange()" class="bg-transparent text-xs text-slate-100 focus:outline-none cursor-pointer font-mono">
+          <span class="text-slate-500 mx-1.5">～</span>
+          <input type="date" id="date-end" onchange="onCustomDateChange()" class="bg-transparent text-xs text-slate-100 focus:outline-none cursor-pointer font-mono">
+        </div>
+        <button type="button" onclick="setDatePreset('all')" title="重設為全部時間" class="cursor-pointer px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition text-xs flex items-center gap-1 active:scale-95">
+          <i data-lucide="rotate-ccw" class="w-3 h-3 text-purple-400"></i> 全部
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- KPI Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 shadow-sm relative overflow-hidden">
+        <div class="flex justify-between items-start">
+          <div>
+            <p class="text-xs font-medium uppercase tracking-wider text-slate-400">總監測文章數</p>
+            <h3 id="kpi-total" class="text-3xl font-bold text-white mt-1">--</h3>
+          </div>
+          <div class="p-2.5 rounded-xl bg-sky-500/10 text-sky-400">
+            <i data-lucide="file-text" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <p class="mt-3 text-xs text-slate-400">PTT MacShop 販售貼文</p>
+      </div>
+
+      <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 shadow-sm relative overflow-hidden">
+        <div class="flex justify-between items-start">
+          <div>
+            <p class="text-xs font-medium uppercase tracking-wider text-slate-400">已售出 (成交篇數)</p>
+            <div class="flex items-baseline space-x-2 mt-1">
+              <h3 id="kpi-sold" class="text-3xl font-bold text-emerald-400">--</h3>
+              <span id="kpi-sold-ratio" class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-medium">--%</span>
+            </div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400">
+            <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <p class="mt-3 text-xs text-slate-400">已標註售出之有效成交案件</p>
+      </div>
+
+      <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 shadow-sm relative overflow-hidden">
+        <div class="flex justify-between items-start">
+          <div>
+            <p class="text-xs font-medium uppercase tracking-wider text-slate-400">販售中 (待售) / 暫售</p>
+            <div class="flex items-baseline space-x-2 mt-1">
+              <h3 id="kpi-active" class="text-3xl font-bold text-sky-400">--</h3>
+              <span id="kpi-reserved" class="text-xs px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 font-medium">-- 篇暫售</span>
+            </div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-sky-500/10 text-sky-400">
+            <i data-lucide="tag" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <p class="mt-3 text-xs text-slate-400">排除暫售之有效掛售流通物件</p>
+      </div>
+
+      <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 shadow-sm relative overflow-hidden">
+        <div class="flex justify-between items-start">
+          <div>
+            <div class="flex items-center gap-2">
+              <p class="text-xs font-medium uppercase tracking-wider text-slate-400">數據涵蓋時間區間</p>
+              <span id="kpi-date-badge" class="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-mono">全部</span>
+            </div>
+            <h3 id="kpi-date-range" class="text-base font-semibold text-slate-200 mt-2">-- ~ --</h3>
+          </div>
+          <div class="p-2.5 rounded-xl bg-purple-500/10 text-purple-400">
+            <i data-lucide="calendar" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <p id="kpi-date-subtext" class="mt-3 text-xs text-slate-400">可自選上方時間區間動態連動</p>
+      </div>
+    </div>
+
+    <!-- Valuation Calculator Panel -->
+    <div id="valuation-calculator-card" class="p-6 rounded-2xl bg-gradient-to-r from-slate-900/90 via-purple-950/25 to-slate-900/90 border border-purple-500/30 shadow-lg relative overflow-hidden">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-5">
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="text-base font-semibold text-white flex items-center">
+              <i data-lucide="calculator" class="w-4 h-4 mr-2 text-purple-400"></i>
+              二手行情合理估價試算機
+            </h2>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-semibold">智慧行情推算</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-0.5">依據所選時間範圍的 PTT 實際成交紀錄，結合電池健康度與原廠保固狀態，即時推算買賣合理開價區間</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="applyCalculatorToFilters()" class="text-xs px-3 py-1.5 rounded-lg bg-purple-600/80 hover:bg-purple-600 text-white font-medium flex items-center gap-1.5 transition">
+            <i data-lucide="filter" class="w-3.5 h-3.5"></i> 一鍵篩選此機型明細
+          </button>
+        </div>
+      </div>
+
+      <!-- Calculator Inputs Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 rounded-xl bg-slate-950/60 border border-slate-800/80">
+        <div>
+          <label class="block text-xs text-slate-400 mb-1.5 font-medium">1. 機型選擇</label>
+          <select id="calc-model" onchange="onCalcModelChange()" class="w-full bg-slate-900 text-xs border border-slate-700 text-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-purple-500">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1.5 font-medium">2. 儲存容量</label>
+          <select id="calc-capacity" onchange="calculateValuation()" class="w-full bg-slate-900 text-xs border border-slate-700 text-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-purple-500">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+        <div>
+          <div class="flex justify-between items-center mb-1.5">
+            <label class="text-xs text-slate-400 font-medium">3. 電池健康度</label>
+            <span id="calc-battery-val" class="text-xs font-bold text-sky-400">85%</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="range" id="calc-battery" min="70" max="100" value="85" oninput="onCalcBatteryInput(this.value)" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-purple-500">
+          </div>
+          <p id="calc-battery-hint" class="text-[10px] text-slate-500 mt-1">80%~89% 正常使用折舊</p>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1.5 font-medium">4. 原廠保固狀態</label>
+          <select id="calc-warranty" onchange="calculateValuation()" class="w-full bg-slate-900 text-xs border border-slate-700 text-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-purple-500">
+            <option value="EXPIRED" selected>已過保 / 無保固</option>
+            <option value="WARRANTY">原廠保固中 (+3~12個月)</option>
+            <option value="APPLECARE">AppleCare+ 意外保險</option>
+            <option value="NEW_UNOPENED">全新未拆 / 未開通</option>
+          </select>
+          <p id="calc-warranty-hint" class="text-[10px] text-slate-500 mt-1">過保標準基準價</p>
+        </div>
+      </div>
+
+      <!-- Valuation Results Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+        <!-- Fast Sell Price -->
+        <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-amber-500/40 transition">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-medium text-slate-400 flex items-center">
+              <i data-lucide="zap" class="w-3.5 h-3.5 mr-1.5 text-amber-400"></i>
+              秒殺出清價 (急售)
+            </span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300 font-semibold">最低10筆均價</span>
+          </div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <h4 id="calc-price-quick" class="text-2xl font-bold text-amber-400">NT$ --</h4>
+          </div>
+          <p id="calc-quick-note" class="text-[11px] text-slate-400 mt-1">選取區間最低 10 筆成交均價，通常 1~2 天內售出</p>
+        </div>
+
+        <!-- Fair Market Price -->
+        <div class="p-4 rounded-xl bg-purple-950/30 border border-purple-500/40 shadow-sm relative">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-purple-200 flex items-center">
+              <i data-lucide="target" class="w-3.5 h-3.5 mr-1.5 text-purple-400"></i>
+              市場行情價 (推薦開價)
+            </span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-semibold">核心眾數</span>
+          </div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <h4 id="calc-price-fair" class="text-2xl font-extrabold text-white">NT$ --</h4>
+            <span id="calc-price-range" class="text-xs text-purple-300/80 font-mono">-- ~ --</span>
+          </div>
+          <p id="calc-adjustment-note" class="text-[11px] text-purple-300/80 mt-1">經電池與保固校正之成交眾數</p>
+        </div>
+
+        <!-- Premium / Best Condition Price -->
+        <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-sky-500/40 transition">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-medium text-slate-400 flex items-center">
+              <i data-lucide="gem" class="w-3.5 h-3.5 mr-1.5 text-sky-400"></i>
+              精品保值價 (高標)
+            </span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300 font-semibold">品相完整</span>
+          </div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <h4 id="calc-price-premium" class="text-2xl font-bold text-sky-400">NT$ --</h4>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-1">適合外觀無傷、盒裝完整、高電量之開價</p>
+        </div>
+      </div>
+
+      <!-- Real transaction benchmarks snippet -->
+      <div id="calc-recent-samples" class="mt-4 pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400">
+        <!-- Populated dynamically -->
+      </div>
+    </div>
+
+    <!-- Price Range Candlestick Chart (Full Width) -->
+    <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+        <div>
+          <h2 class="text-base font-semibold text-white flex items-center">
+            <i data-lucide="candlestick-chart" class="w-4 h-4 mr-2 text-sky-400"></i>
+            各機型成交行情 K 線蠟燭圖 (Candlestick)
+          </h2>
+          <!-- Custom Visual Candlestick Legend -->
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-400 mt-1.5">
+            <span class="flex items-center">
+              <span class="w-3 h-3 bg-emerald-500/80 border border-emerald-400 rounded-sm mr-1.5 inline-block"></span>
+              蠟燭實體：25% ~ 75% 集中成交區
+            </span>
+            <span class="flex items-center">
+              <span class="w-3 h-0.5 bg-emerald-400 mr-1.5 inline-block"></span>
+              上下影線：最高價 ～ 最低價
+            </span>
+            <span class="flex items-center">
+              <span class="w-3 h-0.5 bg-white mr-1.5 inline-block"></span>
+              白橫線：成交中位數
+            </span>
+            <span class="flex items-center">
+              <span class="w-2.5 h-2.5 rounded-full bg-sky-400 border border-slate-900 mr-1.5 inline-block"></span>
+              藍圓點：掛售中位數
+            </span>
+            <span class="text-slate-500 text-[11px]">(點擊蠟燭可直接篩選下方明細)</span>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2">
+          <select id="chart-series-filter" class="bg-slate-800 text-xs border border-slate-700 text-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-sky-500">
+            <option value="ALL">全部系列</option>
+            <option value="iPhone 18">iPhone 18</option>
+            <option value="iPhone 17">iPhone 17</option>
+            <option value="iPhone 16">iPhone 16</option>
+            <option value="iPhone 15">iPhone 15</option>
+            <option value="iPhone 14">iPhone 14</option>
+            <option value="iPhone 13">iPhone 13</option>
+          </select>
+        </div>
+      </div>
+      <div class="relative h-96 w-full">
+        <canvas id="priceRangeChart"></canvas>
+      </div>
+    </div>
+
+    <!-- 2-Column Grid: Trend Chart (Left) & Generation Price Gap Chart (Right) -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Left: Monthly Price Trend -->
+      <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 flex flex-col justify-between">
+        <div>
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+            <div>
+              <h2 id="trend-chart-title" class="text-base font-semibold text-white flex items-center">
+                <i data-lucide="trending-up" class="w-4 h-4 mr-2 text-emerald-400"></i>
+                月度成交均價走勢 (折舊軌跡)
+              </h2>
+              <p id="trend-chart-sub" class="text-xs text-slate-400 mt-0.5">月度平均成交價 (NT$) 歷史走勢</p>
+            </div>
+            <div class="text-xs text-slate-400 flex items-center">
+              <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 mr-1.5"></span> 單位：NT$
+            </div>
+          </div>
+          <div class="relative h-80 w-full">
+            <canvas id="trendChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Generation Price Gap Comparison Chart -->
+      <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 flex flex-col justify-between">
+        <div>
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+            <div>
+              <h2 id="gap-chart-title" class="text-base font-semibold text-white flex items-center">
+                <i data-lucide="arrow-up-right" class="w-4 h-4 mr-2 text-purple-400"></i>
+                歷代最新成交價與世代價差比較
+              </h2>
+              <p id="gap-chart-sub" class="text-xs text-slate-400 mt-0.5">比較相鄰世代最新行情與跨代價差</p>
+            </div>
+            <div class="flex items-center space-x-2">
+              <select id="gap-spec-filter" onchange="renderGenerationGapChart()" class="bg-slate-800 text-xs border border-slate-700 text-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-purple-500">
+                <option value="OVERALL">全系列最新成交</option>
+                <option value="BASE_128G" selected>標準版 128G (熱門基準)</option>
+                <option value="PRO_256G">Pro 256G (旗艦熱門)</option>
+                <option value="PRO_MAX_256G">Pro Max 256G (頂級旗艦)</option>
+                <option value="AVG">全系列成交均價</option>
+              </select>
+            </div>
+          </div>
+          <div class="relative h-80 w-full">
+            <canvas id="generationGapChart"></canvas>
+          </div>
+          <div id="gap-summary-cards" class="mt-4 pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-center gap-2 text-xs"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grouped Price Stats Summary Table -->
+    <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+        <div>
+          <h2 class="text-base font-semibold text-white flex items-center">
+            <i data-lucide="layers" class="w-4 h-4 mr-2 text-sky-400"></i>
+            機型與容量規格行情總表 (點擊可快速過濾下方明細)
+          </h2>
+          <p class="text-xs text-slate-400 mt-0.5">統計各機型容量之「成交最低/最高」、「最新成交」與「最新掛售」完整行情與折讓價差</p>
+        </div>
+        <div class="text-xs text-slate-400 flex items-center gap-2">
+          <span class="inline-flex items-center px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 font-mono text-[11px]">
+            <i data-lucide="pin" class="w-3 h-3 mr-1 text-sky-400"></i> 表頭固定置頂 · 可向下滾動瀏覽
+          </span>
+        </div>
+      </div>
+      <div class="sticky-table-container rounded-xl border border-slate-800 shadow-inner">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead class="sticky top-0 z-20 bg-slate-900 shadow-md select-none">
+            <tr class="border-b border-slate-700 text-slate-300 uppercase tracking-wider bg-slate-900">
+              <th onclick="toggleSummarySort('model')" class="py-3.5 px-4 sticky top-0 bg-slate-900 z-20 whitespace-nowrap cursor-pointer hover:text-white transition">機型 <span id="sort-icon-model">↕</span></th>
+              <th onclick="toggleSummarySort('capacity')" class="py-3.5 px-4 sticky top-0 bg-slate-900 z-20 whitespace-nowrap cursor-pointer hover:text-white transition">容量 <span id="sort-icon-capacity">↕</span></th>
+              <th onclick="toggleSummarySort('total_count')" class="py-3.5 px-4 text-center sticky top-0 bg-slate-900 z-20 whitespace-nowrap cursor-pointer hover:text-white transition">總篇數 <span id="sort-icon-total_count">↕</span></th>
+              <th onclick="toggleSummarySort('sold_ratio')" class="py-3.5 px-4 text-center sticky top-0 bg-slate-900 z-20 whitespace-nowrap cursor-pointer hover:text-white transition">已成交 (率) <span id="sort-icon-sold_ratio">↕</span></th>
+              <th onclick="toggleSummarySort('sold_min')" class="py-3.5 px-4 text-emerald-400 font-semibold sticky top-0 bg-slate-900 z-20 whitespace-nowrap cursor-pointer hover:text-emerald-300 transition">成交最低 <span id="sort-icon-sold_min">↕</span></th>
+              <th onclick="toggleSummarySort('sold_max')" class="py-3.5 px-4 text-emerald-400 font-semibold sticky top-0 bg-slate-900 z-20 whitespace-nowrap cursor-pointer hover:text-emerald-300 transition">成交最高 <span id="sort-icon-sold_max">↕</span></th>
+              <th onclick="toggleSummarySort('latest_sold')" class="py-3.5 px-4 text-emerald-400 font-bold sticky top-0 bg-slate-900 z-20 whitespace-nowrap cursor-pointer hover:text-emerald-300 transition">最新成交 <span id="sort-icon-latest_sold">↕</span></th>
+              <th onclick="toggleSummarySort('latest_active')" class="py-3.5 px-4 text-sky-400 font-bold sticky top-0 bg-slate-900 z-20 whitespace-nowrap cursor-pointer hover:text-sky-300 transition">最新掛售 <span id="sort-icon-latest_active">↕</span></th>
+              <th onclick="toggleSummarySort('price_diff')" class="py-3.5 px-4 text-amber-400 sticky top-0 bg-slate-900 z-20 whitespace-nowrap cursor-pointer hover:text-amber-300 transition">價差折讓 <span id="sort-icon-price_diff">↕</span></th>
+            </tr>
+          </thead>
+          <tbody id="summary-tbody" class="divide-y divide-slate-800/60">
+            <!-- Rendered by app.js -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Filter & Detailed Articles Table -->
+    <div id="articles-section" class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div>
+            <h2 class="text-base font-semibold text-white flex items-center">
+              <i data-lucide="list" class="w-4 h-4 mr-2 text-sky-400"></i>
+              原始文章明細清單 (<span id="filtered-count">0</span> 筆符合)
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5">點擊行情總表任一行可快速連動篩選；點擊標題開啟 PTT 原文</p>
+          </div>
+          <button onclick="resetAllFilters()" title="清除所有篩選條件" class="px-2.5 py-1.5 text-xs rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition flex items-center gap-1.5">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-sky-400"></i> 重設條件
+          </button>
+        </div>
+        <!-- Series Filter Badges -->
+        <div class="flex flex-wrap gap-1.5" id="series-badges">
+          <button onclick="setSeriesFilter('ALL')" class="badge-btn px-3 py-1 text-xs rounded-lg font-medium bg-sky-600 text-white transition" data-val="ALL">全部</button>
+          <button onclick="setSeriesFilter('iPhone 18')" class="badge-btn px-3 py-1 text-xs rounded-lg font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-val="iPhone 18">i18</button>
+          <button onclick="setSeriesFilter('iPhone 17')" class="badge-btn px-3 py-1 text-xs rounded-lg font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-val="iPhone 17">i17</button>
+          <button onclick="setSeriesFilter('iPhone 16')" class="badge-btn px-3 py-1 text-xs rounded-lg font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-val="iPhone 16">i16</button>
+          <button onclick="setSeriesFilter('iPhone 15')" class="badge-btn px-3 py-1 text-xs rounded-lg font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-val="iPhone 15">i15</button>
+          <button onclick="setSeriesFilter('iPhone 14')" class="badge-btn px-3 py-1 text-xs rounded-lg font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-val="iPhone 14">i14</button>
+          <button onclick="setSeriesFilter('iPhone 13')" class="badge-btn px-3 py-1 text-xs rounded-lg font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-val="iPhone 13">i13</button>
+        </div>
+      </div>
+
+      <!-- Active filter chips & quick toggles banner -->
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div id="active-filter-chips" class="hidden"></div>
+        <div class="flex items-center gap-2">
+          <button id="btn-toggle-bargain" onclick="toggleBargainFilter()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 text-xs font-semibold transition">
+            <i data-lucide="flame" class="w-3.5 h-3.5 text-emerald-400"></i>
+            <span id="bargain-btn-text">🔥 只看超值撿漏好康 (低於行情)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Advanced Filter Controls -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-slate-900/40 p-4 rounded-xl border border-slate-800">
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">子機型</label>
+          <select id="filter-model" onchange="applyFilters()" class="w-full bg-slate-800 border border-slate-700 text-xs rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-sky-500">
+            <option value="ALL">全部子機型</option>
+            <option value="Pro Max">Pro Max</option>
+            <option value="Pro">Pro</option>
+            <option value="Plus">Plus</option>
+            <option value="標準版">標準版</option>
+            <option value="mini">mini</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">容量</label>
+          <select id="filter-capacity" onchange="applyFilters()" class="w-full bg-slate-800 border border-slate-700 text-xs rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-sky-500">
+            <option value="ALL">全部容量</option>
+            <option value="128G">128G</option>
+            <option value="256G">256G</option>
+            <option value="512G">512G</option>
+            <option value="1TB">1TB</option>
+            <option value="2TB">2TB</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">售出狀態</label>
+          <select id="filter-status" onchange="applyFilters()" class="w-full bg-slate-800 border border-slate-700 text-xs rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-sky-500">
+            <option value="ALL">全部狀態</option>
+            <option value="已售出">🔴 僅看已售出 (成交)</option>
+            <option value="暫售">🟡 僅看暫售 (保留中)</option>
+            <option value="洽中">🟣 僅看洽中</option>
+            <option value="販售中">🟢 僅看販售中 (掛售)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">關鍵字搜尋 (地區/顏色/標題/保固)</label>
+          <div class="relative">
+            <input type="text" id="filter-keyword" oninput="applyFilters()" placeholder="例如：台北、原色、90%、AppleCare..." class="w-full bg-slate-800 border border-slate-700 text-xs rounded-lg pl-8 pr-3 py-2 text-slate-200 focus:outline-none focus:border-sky-500 placeholder-slate-500">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="overflow-x-auto rounded-xl border border-slate-800">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="border-b border-slate-800 text-slate-400 uppercase tracking-wider bg-slate-900/60">
+              <th class="py-3 px-4">狀態 / 標籤</th>
+              <th class="py-3 px-4 cursor-pointer hover:text-white" onclick="changeSort('date')">日期 ↕</th>
+              <th class="py-3 px-4">地點</th>
+              <th class="py-3 px-4">機型</th>
+              <th class="py-3 px-4">容量</th>
+              <th class="py-3 px-4 cursor-pointer hover:text-white" onclick="changeSort('price')">價格 (NT$) ↕</th>
+              <th class="py-3 px-4">電池</th>
+              <th class="py-3 px-4">保固</th>
+              <th class="py-3 px-4">PTT 標題 (點擊開原文)</th>
+            </tr>
+          </thead>
+          <tbody id="articles-tbody" class="divide-y divide-slate-800/60">
+            <!-- Rendered by app.js -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
+        <div class="text-xs text-slate-400">
+          顯示第 <span id="page-start">1</span> 至 <span id="page-end">10</span> 筆，共 <span id="page-total">0</span> 筆
+        </div>
+        <div class="flex items-center space-x-2">
+          <button id="btn-prev" onclick="prevPage()" class="px-3 py-1.5 text-xs rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed">上一頁</button>
+          <span id="page-current" class="text-xs px-2 text-slate-300">1 / 1</span>
+          <button id="btn-next" onclick="nextPage()" class="px-3 py-1.5 text-xs rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed">下一頁</button>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer class="border-t border-slate-800 py-8 text-center text-xs text-slate-500 mt-12">
+    <p>PTT MacShop iPhone 行情雷達 · 資料來源：批踢踢實業坊 MacShop 板</p>
+    <p class="mt-1">由 Antigravity 自動抓取分析系統生成</p>
+  </footer>
+
+  <script src="iphone_data.js?v=2.2"></script>
+  <script src="app.js?v=2.2"></script>
+</body>
+</html>
