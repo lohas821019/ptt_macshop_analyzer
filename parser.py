@@ -1,3 +1,4 @@
+import json
 import re
 import datetime
 from bs4 import BeautifulSoup
@@ -69,6 +70,12 @@ VALID_MODEL_CAPACITIES = {
     # iPad mini 7 (Only 128G, 256G, 512G)
     "iPad mini 7 (WiFi)": ["128G", "256G", "512G"],
     "iPad mini 7 (Cellular)": ["128G", "256G", "512G"],
+    # iPad mini 5 (Only 64G and 256G)
+    "iPad mini 5 (WiFi)": ["64G", "256G"],
+    "iPad mini 5 (Cellular)": ["64G", "256G"],
+    # iPad mini 4 (16G, 32G, 64G, 128G)
+    "iPad mini 4 (WiFi)": ["16G", "32G", "64G", "128G"],
+    "iPad mini 4 (Cellular)": ["16G", "32G", "64G", "128G"],
 }
 
 # Sold keywords
@@ -158,6 +165,26 @@ def clean_text(text):
         return ""
     return re.sub(r'\s+', ' ', text).strip()
 
+def clean_block_template(text):
+    if not text:
+        return ""
+    patterns = [
+        r'不得超過台灣官方定價[。.]?',
+        r'售出後修改價格至不可視者水桶(?:並劣退)?[。.]?',
+        r'可憑商品序號至\s*Apple\s*官網查詢\s*(?:https?://\S+)?[。.]?',
+        r'詳述有什麼或缺少什麼配件[。.]?',
+        r'5001元以上的商品只可面交或透過第三方代收平台交易[，,]不可先收款後寄送[。.]?',
+        r'所有商品皆需附實物照[^\n\r]*',
+        r'且每一張照片皆需與清晰易見[^\n\r]*',
+        r'違反者[，,]\s*刪文並水桶[^\n\r]*',
+        r'\*\[[0-9;]*m',
+    ]
+    cleaned = text
+    for pat in patterns:
+        cleaned = re.sub(pat, '', cleaned, flags=re.IGNORECASE)
+    lines = [l.strip() for l in cleaned.split('\n') if l.strip()]
+    return '\n'.join(lines)
+
 def extract_block(tag, next_tags, text):
     open_b = r'[\[［【]'
     close_b = r'[\]］】]'
@@ -177,8 +204,30 @@ def split_items_flexibly(block_text):
         '一': '1', '二': '2', '三': '3',
     }
 
+    # PTT often puts the item number on its own line, followed by the item on
+    # the next line (e.g. "1." then "iPad mini 6 ..."). Map those device lines
+    # before the inline-number parser so empty numbered entries are not created.
+    marker_pattern = r'^[\(（]?([0-9A-Za-z①-⑤❶-❺一二三]+)[\)）\.、\-]$'
+    for idx, line in enumerate(lines[:-1]):
+        marker = re.match(marker_pattern, line.strip())
+        if not marker:
+            continue
+        for candidate in lines[idx + 1:]:
+            if re.match(marker_pattern, candidate.strip()):
+                break
+            if re.search(r'(?i)iphone|ipad', candidate):
+                raw_key = marker.group(1).strip()
+                norm_key = circled_map.get(raw_key, raw_key.upper())
+                items[norm_key] = candidate.strip()
+                break
+
     pattern = r'^[\(（]?([0-9A-Za-z①-⑤❶-❺一二三]+)[\)）\.、\s\-]+(.*)$'
     for line in lines:
+        if re.fullmatch(marker_pattern, line.strip()):
+            continue
+        # A dotted PTT price such as "1.8500" is a price, not item 1 with value 8500.
+        if re.fullmatch(r'\d{1,2}\.\d{3,4}', line.strip()):
+            continue
         m = re.match(pattern, line)
         if m:
             raw_key = m.group(1).strip()
@@ -207,21 +256,26 @@ def split_items_flexibly(block_text):
 def check_sold_status(title, body_text, price_str, push_status=None):
     clean_title = re.sub(r'\[\s*販售.*?\]|【\s*販售.*?】', '', title)
     
+    clean_price = clean_block_template(price_str)
+    # Remove post-sale condition clauses like '售出後...' (e.g. 售出後個人保固3天, 售出後概不退換)
+    check_price = re.sub(r'售出後[^\n\r，。,.]*', '', clean_price)
+
     # 1. Check Sold
     sold_in_title = any(kw in clean_title for kw in SOLD_KEYWORDS)
-    sold_in_price = any(kw in price_str for kw in SOLD_KEYWORDS)
+    sold_in_price = any(kw in check_price for kw in SOLD_KEYWORDS)
     main_body = body_text.split('★請再次確認')[0] if body_text else ""
-    sold_in_body = sold_in_price or any(kw in main_body for kw in ['已售出', '已售', '（售出）', '(售出)', '【售出】'])
+    check_body = re.sub(r'售出後[^\n\r，。,.]*', '', clean_block_template(main_body))
+    sold_in_body = sold_in_price or any(kw in check_body for kw in ['已售出', '已售', '（售出）', '(售出)', '【售出】'])
 
     # 2. Check Reserved (暫售)
     reserved_in_title = any(kw in clean_title for kw in RESERVED_KEYWORDS)
-    reserved_in_price = any(kw in price_str for kw in RESERVED_KEYWORDS)
-    reserved_in_body = reserved_in_price or any(kw in main_body for kw in RESERVED_KEYWORDS)
+    reserved_in_price = any(kw in check_price for kw in RESERVED_KEYWORDS)
+    reserved_in_body = reserved_in_price or any(kw in check_body for kw in RESERVED_KEYWORDS)
 
     # 3. Check Pending (洽中)
     pending_in_title = any(kw in clean_title for kw in PENDING_KEYWORDS)
-    pending_in_price = any(kw in price_str for kw in PENDING_KEYWORDS)
-    pending_in_body = pending_in_price or any(kw in main_body for kw in PENDING_KEYWORDS)
+    pending_in_price = any(kw in check_price for kw in PENDING_KEYWORDS)
+    pending_in_body = pending_in_price or any(kw in check_body for kw in PENDING_KEYWORDS)
 
     if sold_in_title or sold_in_price or sold_in_body:
         status = '已售出'
@@ -251,6 +305,9 @@ MIN_SERIES_PRICE = {
     "iPhone 13": 3500,
     "iPad mini 7": 8000,
     "iPad mini 6": 4500,
+    "iPad mini 5": 2500,
+    "iPad mini 4": 1500,
+    "iPad Pro": 5000,
 }
 
 def parse_price_candidates(text):
@@ -281,8 +338,18 @@ def parse_price_candidates(text):
         if GLOBAL_MIN_PRICE <= val <= 100000:
             candidates.append(val)
 
+    # PTT often joins a numbered item and its price as "1.8500"; here the
+    # leading 1 is the item number, so the actual price is NT$8,500.
+    dotted_price_matches = list(re.finditer(r'(?<!\d)([1-9])\.(\d{3,4})(?!\d)', text))
+    for dm in dotted_price_matches:
+        val = int(dm.group(2))
+        if GLOBAL_MIN_PRICE <= val <= 100000:
+            candidates.append(val)
+
     # 3. Standard numeric patterns: e.g. 32000, 32,000, NT$20000
-    raw_nums = re.findall(r'(\d[\d,]{3,6})', text)
+    # Remove numbered-item price syntax first to avoid reading item indexes as amounts.
+    standard_price_text = re.sub(r'(?<!\d)[1-9]\.\d{3,4}(?!\d)', ' ', text)
+    raw_nums = re.findall(r'(\d[\d,]{3,6})', standard_price_text)
     for rn in raw_nums:
         clean_num = int(rn.replace(',', ''))
         if GLOBAL_MIN_PRICE <= clean_num <= 100000:
@@ -432,30 +499,60 @@ def determine_push_status(author_pushes, item_key=None):
 
 def parse_single_phone(item_model_str, item_spec_str, item_price_str, title, body_text, article_id, url, timestamp, date_str, location, battery, is_multi_item=False, push_status=None, warranty=None):
     """
-    Parses a single device pair and checks if it matches iPhone 13~18 or iPad mini 6~7.
+    Parses a single device pair and checks supported iPhone, iPad mini, and iPad Pro listings.
     """
     if is_multi_item:
         text_to_check = f"{item_model_str} {item_spec_str}".lower()
     else:
         text_to_check = f"{title} {item_model_str} {item_spec_str}".lower()
+    normalized_text_to_check = re.sub(r'(?i)\bi\s*pad\s*mimi\b', 'ipad mini', text_to_check)
+    normalized_text_to_check = re.sub(r'(?i)\bi\s*pad\s*mini\b', 'ipad mini', normalized_text_to_check)
 
     # If item or title only sells accessories without phone
     if is_accessory_item(item_model_str, title, price=None):
         return None
 
+    capacity_explicit = False
+    quality_flags = []
+    # iPad Pro: group generations under one searchable category, retaining size/chip/connectivity in model.
+    if re.search(r'(?i)i\s*pad\s*pro\b', f"{text_to_check} {title}"):
+        device_type = 'ipad_pro'
+        found_series = 'iPad Pro'
+        text_for_model = f"{item_model_str} {item_spec_str} {title}" if not is_multi_item else f"{item_model_str} {item_spec_str}"
+        size_match = re.search(r'(?i)(11|12\.9|13)\s*(?:吋|inch|英吋|\")?', text_for_model)
+        size = f"{size_match.group(1)}-inch" if size_match else "尺寸未明"
+        chip_match = re.search(r'(?i)\b(M[1-5])\b', text_for_model)
+        chip = chip_match.group(1).upper() if chip_match else "世代未明"
+        if not chip_match:
+            quality_flags.append("世代未辨識")
+        if not size_match:
+            quality_flags.append("尺寸未辨識")
+        is_cellular = any(k in text_for_model.lower() for k in ['cellular', '行動網路', '插卡', '5g', 'lte'])
+        full_model = f"iPad Pro {size} {chip} ({'Cellular' if is_cellular else 'WiFi'})"
+        capacity = None
+        text_for_cap = f"{item_model_str} {item_spec_str}" if is_multi_item else f"{item_model_str} {item_spec_str} {title}"
+        for pat, cap in CAPACITY_PATTERNS:
+            if re.search(pat, text_for_cap):
+                capacity = cap
+                capacity_explicit = True
+                break
+        capacity = capacity or "未標示"
     # 1. Check iPad mini
-    is_ipad_mini = 'ipad mini' in text_to_check or 'ipadmini' in text_to_check
-    if is_ipad_mini:
+    elif 'ipad mini' in normalized_text_to_check or 'ipadmini' in normalized_text_to_check:
         device_type = 'ipad_mini'
         found_series = None
-        if re.search(r'mini\s*7\b', text_to_check):
+        if re.search(r'(?i)(?:mini\s*7(?!\d)|mini\s*第?\s*7\s*代|mini\s*\(?\s*a17|\ba17\s*pro\b)', normalized_text_to_check):
             found_series = 'iPad mini 7'
-        elif re.search(r'mini\s*6\b', text_to_check):
+        elif re.search(r'(?i)(?:mini\s*6(?!\d)|mini\s*第?\s*6\s*代)', normalized_text_to_check):
             found_series = 'iPad mini 6'
+        elif re.search(r'(?i)(?:mini\s*5(?!\d)|mini\s*第?\s*5\s*代|mini\s*五代)', normalized_text_to_check):
+            found_series = 'iPad mini 5'
+        elif re.search(r'(?i)(?:mini\s*4(?!\d)|mini\s*第?\s*4\s*代|mini\s*四代)', normalized_text_to_check):
+            found_series = 'iPad mini 4'
         else:
             return None
 
-        is_cellular = any(k in text_to_check for k in ['lte', '5g', 'cellular', '行動網路', '插卡'])
+        is_cellular = bool(re.search(r'(?i)\b(?:5g|4g|lte|cellular|esim)\b|行動網路|插卡|電信版', normalized_text_to_check))
         connectivity = "Cellular" if is_cellular else "WiFi"
         full_model = f"{found_series} ({connectivity})"
 
@@ -464,9 +561,10 @@ def parse_single_phone(item_model_str, item_spec_str, item_price_str, title, bod
         for pat, cap in CAPACITY_PATTERNS:
             if re.search(pat, text_for_cap):
                 capacity = cap
+                capacity_explicit = True
                 break
         if not capacity:
-            capacity = "128G" if found_series == 'iPad mini 7' else "64G"
+            capacity = "未標示"
 
     else:
         # Check iPhone
@@ -494,17 +592,21 @@ def parse_single_phone(item_model_str, item_spec_str, item_price_str, title, bod
         for pat, cap in CAPACITY_PATTERNS:
             if re.search(pat, text_for_cap):
                 capacity = cap
+                capacity_explicit = True
                 break
         if not capacity:
-            capacity = "128G"
+            capacity = "未標示"
 
     # Strict Validation against Apple's Official Released Capacities
     valid_caps = VALID_MODEL_CAPACITIES.get(full_model)
-    if not valid_caps:
+    if device_type == 'ipad_pro':
+        valid_caps = None
+    if not valid_caps and device_type != 'ipad_pro':
         # Invalid / Phantom model that Apple never released (e.g. iPhone 15 mini, iPhone 13 Plus)
         return None
 
-    if capacity not in valid_caps:
+    if valid_caps and capacity_explicit and capacity not in valid_caps:
+        quality_flags.append("容量規格不符")
         found_valid = None
         for pat, cap in CAPACITY_PATTERNS:
             if cap in valid_caps and re.search(pat, text_for_cap):
@@ -513,33 +615,37 @@ def parse_single_phone(item_model_str, item_spec_str, item_price_str, title, bod
         if found_valid:
             capacity = found_valid
         else:
-            capacity = valid_caps[0]
+            capacity = "未標示"
 
     # Status check
     status, sold_in_title, sold_in_body = check_sold_status(title, body_text, item_price_str, push_status=push_status)
 
-    if any(k in item_price_str for k in SOLD_KEYWORDS):
-        status = '已售出'
-    elif any(k in item_price_str for k in RESERVED_KEYWORDS):
-        status = '暫售'
-    elif any(k in item_price_str for k in PENDING_KEYWORDS):
-        status = '洽中'
-
-    if push_status:
-        status = push_status
-        if push_status == '已售出':
-            sold_in_body = 1
-
+    price_candidates = set(parse_price_candidates(item_price_str))
     price = extract_prices(item_price_str, body_text if not item_price_str else "", series=found_series)
+    if not capacity_explicit:
+        quality_flags.append("容量未明確標示")
+    if price is None:
+        quality_flags.append("價格未辨識")
+    if len(price_candidates) > 1 and not any(word in item_price_str for word in ('降', '改')):
+        quality_flags.append("價格欄含多個金額")
+    if re.search(r'合售|搭售|不拆售|整組|一起帶|組合價|多件優惠', title):
+        quality_flags.append("疑似合售")
+
+    flag_penalties = {
+        "世代未辨識": 15, "尺寸未辨識": 10, "容量未明確標示": 15,
+        "價格未辨識": 35, "價格欄含多個金額": 25, "疑似合售": 25
+    }
+    quality_score = max(0, 100 - sum(flag_penalties.get(flag, 0) for flag in quality_flags))
 
     # Reject cases where price is missing or it is an accessory
     if is_accessory_item(item_model_str, title, price=price):
         return None
 
+    cleaned_price_str = clean_block_template(item_price_str)
     if price is None and status == '已售出':
-        raw_price_str = item_price_str or "售出未留價格"
+        raw_price_str = cleaned_price_str or "售出未留價格"
     else:
-        raw_price_str = item_price_str
+        raw_price_str = cleaned_price_str
 
     return {
         "article_id": article_id,
@@ -559,6 +665,8 @@ def parse_single_phone(item_model_str, item_spec_str, item_price_str, title, bod
         "url": url,
         "title": clean_text(title),
         "raw_price_str": clean_text(raw_price_str),
+        "quality_score": quality_score,
+        "quality_flags": json.dumps(quality_flags, ensure_ascii=False),
     }
 
 def parse_article_html(article_id, url, title, author, timestamp, raw_html):
@@ -591,9 +699,9 @@ def parse_article_html(article_id, url, title, author, timestamp, raw_html):
     warranty = extract_warranty(body_text)
 
     # Extract Blocks
-    model_block = extract_block('型號', ['規格', '保固', '售價', '價格'], body_text)
-    spec_block = extract_block('規格', ['保固', '盒裝配件', '售價', '價格'], body_text)
-    price_block = extract_block(r'(?:售價|價格)', ['交易方式/地點', '交易方式', '交易地點', '連絡方式', '商品照/補充說明'], body_text)
+    model_block = clean_block_template(extract_block('型號', ['規格', '保固', '售價', '價格'], body_text))
+    spec_block = clean_block_template(extract_block('規格', ['保固', '盒裝配件', '售價', '價格'], body_text))
+    price_block = clean_block_template(extract_block(r'(?:售價|價格)', ['交易方式/地點', '交易方式', '交易地點', '連絡方式', '商品照/補充說明'], body_text))
 
     model_items = split_items_flexibly(model_block)
     spec_items = split_items_flexibly(spec_block)

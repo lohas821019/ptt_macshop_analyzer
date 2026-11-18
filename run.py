@@ -49,19 +49,38 @@ def main():
     parser.add_argument("--full", action="store_true", help="Force full 2-year history crawl instead of incremental update")
     parser.add_argument("--reparse", action="store_true", help="Force re-parsing all raw articles in database")
     parser.add_argument("--skip-crawl", action="store_true", help="Skip crawling, analyze local DB and serve")
+    parser.add_argument("--ipad-pro-only", action="store_true", help="Crawl iPad Pro only, then update analysis and serve")
+    parser.add_argument("--ipad-mini-only", action="store_true", help="Crawl iPad mini only, then update analysis and serve")
     parser.add_argument("--serve-only", action="store_true", help="Only launch local web dashboard")
     parser.add_argument("--port", type=int, default=8000, help="Local server port (default: 8000)")
     parser.add_argument("--no-browser", action="store_true", help="Do not open browser automatically")
+    parser.add_argument("--refresh-days", type=int, default=30,
+        help="Re-fetch non-sold articles posted within this many days to detect post-edit status changes (default: 30)")
+    parser.add_argument("--skip-refresh", action="store_true",
+        help="Skip the stale status refresh step")
 
     args = parser.parse_args()
 
     if not args.serve_only and not args.skip_crawl:
         mode_str = "Full History Scan" if args.full else "Incremental Scan"
+        if args.ipad_pro_only:
+            mode_str = "iPad Pro Only - " + mode_str
+        elif args.ipad_mini_only:
+            mode_str = "iPad mini Only - " + mode_str
         print(f"============================================================")
-        print(f"[*] PTT MacShop iPhone 13~18 Analyzer - {mode_str}")
+        print(f"[*] PTT MacShop Device Analyzer - {mode_str}")
         print(f"[*] Time Range: Past {args.years} years | Threads: {args.workers}")
         print(f"============================================================")
-        crawler.crawl_all(years=args.years, max_pages=args.max_pages, max_workers=args.workers, full_scan=args.full)
+        if args.ipad_pro_only:
+            crawler.crawl_ipad_pro(years=args.years, max_pages=args.max_pages, max_workers=args.workers, full_scan=args.full)
+        elif args.ipad_mini_only:
+            crawler.crawl_ipad_mini(years=args.years, max_pages=args.max_pages, max_workers=args.workers, full_scan=args.full)
+        else:
+            crawler.crawl_all(years=args.years, max_pages=args.max_pages, max_workers=args.workers, full_scan=args.full)
+
+    if not args.serve_only and not args.skip_crawl and not args.skip_refresh:
+        print(f"\n[*] Refreshing status for recent non-sold articles (past {args.refresh_days} days)...")
+        crawler.refresh_stale_statuses(max_age_days=args.refresh_days, max_workers=args.workers)
 
     if not args.serve_only:
         print("\n[*] Running statistical analysis & JSON generation...")

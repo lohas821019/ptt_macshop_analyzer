@@ -5,7 +5,7 @@ import time
 import datetime
 import concurrent.futures
 import threading
-from urllib.parse import quote
+from urllib.parse import quote_plus
 import database
 
 BASE_URL = "https://www.ptt.cc"
@@ -18,8 +18,11 @@ SERIES_QUERIES = [
     "iPhone 15",
     "iPhone 14",
     "iPhone 13",
+    "iPad mini",
     "iPad mini 7",
     "iPad mini 6",
+    "ipadmini",
+    "iPad Pro",
 ]
 
 def create_session():
@@ -31,7 +34,7 @@ def create_session():
     return session
 
 def fetch_search_page(session, query, page=1):
-    url = f"{SEARCH_URL}?page={page}&q={quote(query)}"
+    url = f"{SEARCH_URL}?page={page}&q={quote_plus(query)}"
     try:
         r = session.get(url, timeout=10)
         if r.status_code == 200:
@@ -104,6 +107,7 @@ def crawl_series(query, years=2, max_pages=None, max_workers=5, full_scan=False)
     to_fetch = []
     reached_cutoff = False
     consecutive_existing = 0
+    consecutive_cached_pages = 0
 
     while True:
         if max_pages and page > max_pages:
@@ -143,12 +147,17 @@ def crawl_series(query, years=2, max_pages=None, max_workers=5, full_scan=False)
             break
 
         # Early stopping for incremental updates:
-        # If all sales articles on this page already exist, or we hit >= 15 consecutive existing articles
+        # If at least 2 consecutive pages have 0 new sales articles, or we hit >= 30 consecutive existing articles
         if not full_scan:
             if len(sales_entries) > 0 and new_on_page == 0:
-                print(f"  --> All sales articles on page {page} already cached in database. Stopping early.")
+                consecutive_cached_pages += 1
+            else:
+                consecutive_cached_pages = 0
+
+            if consecutive_cached_pages >= 2:
+                print(f"  --> {consecutive_cached_pages} consecutive pages with no new sales articles. Stopping early.")
                 break
-            if consecutive_existing >= 15:
+            if consecutive_existing >= 30:
                 print(f"  --> Reached {consecutive_existing} consecutive cached articles. Stopping early.")
                 break
 
@@ -209,6 +218,59 @@ def crawl_all(years=2, max_pages=None, max_workers=5, full_scan=False):
     print(f"\n==========================================")
     print(f"[OK] All series crawl finished in {elapsed:.1f} seconds! Total articles scanned: {total}")
     print(f"==========================================")
+
+def crawl_ipad_pro(years=2, max_pages=None, max_workers=5, full_scan=False):
+    """Crawl iPad Pro sales posts only, using the shared cache and parsing pipeline."""
+    return crawl_series("iPad Pro", years=years, max_pages=max_pages,
+                        max_workers=max_workers, full_scan=full_scan)
+
+def crawl_ipad_mini(years=2, max_pages=None, max_workers=5, full_scan=False):
+    """Crawl iPad mini sales posts only."""
+    total = 0
+    for q in ["iPad mini", "iPad mini 7", "iPad mini 6", "ipadmini"]:
+        total += crawl_series(q, years=years, max_pages=max_pages,
+                              max_workers=max_workers, full_scan=full_scan)
+    return total
+
+def refresh_stale_statuses(max_age_days=30, max_workers=5):
+    """
+    Re-fetches HTML for recently listed, non-sold articles to capture
+    post-listing edits (e.g., seller marks item as sold by editing the body).
+    Only articles within the past `max_age_days` days are checked.
+    """
+    database.init_db()
+    stale = database.get_stale_articles(max_age_days=max_age_days)
+    if not stale:
+        print(f"[*] No stale articles to refresh (past {max_age_days} days, non-sold).")
+        return 0
+
+    print(f"[*] Refreshing {len(stale)} recent non-sold articles (past {max_age_days} days)...")
+
+    _thread_local = threading.local()
+
+    def get_session():
+        if not hasattr(_thread_local, "session"):
+            _thread_local.session = create_session()
+        return _thread_local.session
+
+    refreshed = 0
+
+    def worker(row):
+        s = get_session()
+        html = fetch_article_html(s, row['url'])
+        if html is not None:
+            database.update_raw_html(row['article_id'], html)
+            return True
+        return False
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = {executor.submit(worker, row): row for row in stale}
+        for f in concurrent.futures.as_completed(futures):
+            if f.result():
+                refreshed += 1
+
+    print(f"[OK] Refreshed HTML for {refreshed}/{len(stale)} articles. They will be re-parsed in next analysis step.")
+    return refreshed
 
 if __name__ == "__main__":
     import sys

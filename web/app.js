@@ -22,6 +22,7 @@ let currentDateRange = {
   endDate: '2026-09-20'
 };
 let currentChartSeries = 'ALL';
+let currentChartSize = 'ALL';
 
 let priceChart = null;
 let trendChart = null;
@@ -29,11 +30,13 @@ let gapChart = null;
 
 const SERIES_ORDER_CONFIG = {
   iphone: ["iPhone 18", "iPhone 17", "iPhone 16", "iPhone 15", "iPhone 14", "iPhone 13"],
-  ipad_mini: ["iPad mini 7", "iPad mini 6"]
+  ipad_mini: ["iPad mini 7", "iPad mini 6"],
+  ipad_pro: ["iPad Pro"]
 };
 const CAPACITY_ORDER_CONFIG = {
-  iphone: ["128G", "256G", "512G", "1TB", "2TB", "64G"],
-  ipad_mini: ["64G", "128G", "256G", "512G"]
+  iphone: ["128G", "256G", "512G", "1TB", "2TB", "64G", "未標示"],
+  ipad_mini: ["64G", "128G", "256G", "512G", "未標示"],
+  ipad_pro: ["64G", "128G", "256G", "512G", "1TB", "2TB", "未標示"]
 };
 
 // Initialize Lucide Icons
@@ -215,7 +218,7 @@ function computeDynamicCategoryData(category, startDate, endDate) {
     (!endDate || it.date <= endDate)
   );
 
-  const itemsWithPrice = catItems.filter(it => it.price !== null && it.price !== undefined && it.price >= 3000);
+  const itemsWithPrice = catItems.filter(it => it.price !== null && it.price !== undefined && it.price >= 3000 && it.market_eligible !== false);
   const soldItems = itemsWithPrice.filter(it => it.status === '已售出');
   const reservedItems = itemsWithPrice.filter(it => it.status === '暫售');
   const pendingItems = itemsWithPrice.filter(it => it.status === '洽中');
@@ -383,8 +386,9 @@ async function loadData() {
     return;
   }
 
+  const cacheBuster = `?_t=${Date.now()}`;
   try {
-    const res = await fetch('../data/iphone_data.json');
+    const res = await fetch(`../data/iphone_data.json${cacheBuster}`, { cache: 'no-store' });
     if (!res.ok) throw new Error('Network response not ok');
     rawData = await res.json();
     initDataRange();
@@ -392,7 +396,7 @@ async function loadData() {
   } catch (err) {
     console.error('Failed to load iphone_data.json:', err);
     try {
-      const res2 = await fetch('./data/iphone_data.json');
+      const res2 = await fetch(`./data/iphone_data.json${cacheBuster}`, { cache: 'no-store' });
       rawData = await res2.json();
       initDataRange();
       setupDashboard();
@@ -441,17 +445,49 @@ function setupDatePresetListeners() {
 function switchCategory(cat) {
   if (activeCategory === cat) return;
   activeCategory = cat;
-  currentChartSeries = 'ALL';
 
-  // Toggle Tab styles
+  const tabMiniCompare = document.getElementById('tab-mini-compare');
   const tabIphone = document.getElementById('tab-iphone');
   const tabIpad = document.getElementById('tab-ipad');
+  const tabIpadPro = document.getElementById('tab-ipad-pro');
+  const stdView = document.getElementById('standard-category-view');
+  const miniView = document.getElementById('mini-compare-view');
+
+  if (cat === 'mini_compare') {
+    if (tabMiniCompare) tabMiniCompare.className = 'category-tab py-3.5 px-4 text-sm font-semibold border-b-2 border-amber-500 text-amber-400 flex items-center transition whitespace-nowrap';
+    if (tabIphone) tabIphone.className = 'category-tab py-3.5 px-4 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center transition whitespace-nowrap';
+    if (tabIpad) tabIpad.className = 'category-tab py-3.5 px-4 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center transition whitespace-nowrap';
+    if (tabIpadPro) tabIpadPro.className = 'category-tab py-3.5 px-4 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center transition whitespace-nowrap';
+
+    if (stdView) stdView.classList.add('hidden');
+    if (miniView) miniView.classList.remove('hidden');
+
+    renderMiniCompareView();
+    if (window.lucide) window.lucide.createIcons();
+    return;
+  }
+
+  // Standard category views
+  if (tabMiniCompare) tabMiniCompare.className = 'category-tab py-3.5 px-4 text-sm font-medium border-b-2 border-transparent text-amber-400/80 hover:text-amber-200 flex items-center transition whitespace-nowrap';
+  if (stdView) stdView.classList.remove('hidden');
+  if (miniView) miniView.classList.add('hidden');
+
+  const ipadProChips = getIpadProChipGenerations();
+  currentChartSeries = cat === 'ipad_pro' ? (ipadProChips[0] || 'ALL') : 'ALL';
+  currentChartSize = 'ALL';
+
   if (cat === 'iphone') {
-    tabIphone.className = 'category-tab py-3.5 px-4 text-sm font-semibold border-b-2 border-sky-500 text-sky-400 flex items-center transition';
-    tabIpad.className = 'category-tab py-3.5 px-4 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center transition';
+    tabIphone.className = 'category-tab py-3.5 px-4 text-sm font-semibold border-b-2 border-sky-500 text-sky-400 flex items-center transition whitespace-nowrap';
+    tabIpad.className = 'category-tab py-3.5 px-4 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center transition whitespace-nowrap';
+    tabIpadPro.className = 'category-tab py-3.5 px-4 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center transition whitespace-nowrap';
+  } else if (cat === 'ipad_mini') {
+    tabIpad.className = 'category-tab py-3.5 px-4 text-sm font-semibold border-b-2 border-sky-500 text-sky-400 flex items-center transition whitespace-nowrap';
+    tabIphone.className = 'category-tab py-3.5 px-4 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center transition whitespace-nowrap';
+    tabIpadPro.className = 'category-tab py-3.5 px-4 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center transition whitespace-nowrap';
   } else {
-    tabIpad.className = 'category-tab py-3.5 px-4 text-sm font-semibold border-b-2 border-sky-500 text-sky-400 flex items-center transition';
-    tabIphone.className = 'category-tab py-3.5 px-4 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center transition';
+    tabIpadPro.className = 'category-tab py-3.5 px-4 text-sm font-semibold border-b-2 border-sky-500 text-sky-400 flex items-center transition whitespace-nowrap';
+    tabIphone.className = 'category-tab py-3.5 px-4 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center transition whitespace-nowrap';
+    tabIpad.className = 'category-tab py-3.5 px-4 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center transition whitespace-nowrap';
   }
 
   // Reset filter selections
@@ -488,8 +524,11 @@ function updateCategoryView() {
 
     const tabIphoneCount = document.getElementById('tab-iphone-count');
     const tabIpadCount = document.getElementById('tab-ipad-count');
+    const ipadProCount = rawData.items.filter(it => it.device_type === 'ipad_pro' && (!currentDateRange.startDate || it.date >= currentDateRange.startDate) && (!currentDateRange.endDate || it.date <= currentDateRange.endDate)).length;
+    const tabIpadProCount = document.getElementById('tab-ipad-pro-count');
     if (tabIphoneCount) tabIphoneCount.textContent = iphoneCount.toLocaleString();
     if (tabIpadCount) tabIpadCount.textContent = ipadCount.toLocaleString();
+    if (tabIpadProCount) tabIpadProCount.textContent = ipadProCount.toLocaleString();
   }
 
   updateKPIs(catData.summary);
@@ -505,8 +544,10 @@ function renderCategoryControls() {
   const modelSelect = document.getElementById('filter-model');
   const capSelect = document.getElementById('filter-capacity');
   const chartFilter = document.getElementById('chart-series-filter');
+  const chartSizeFilter = document.getElementById('chart-size-filter');
 
   if (activeCategory === 'iphone') {
+    if (chartSizeFilter) chartSizeFilter.classList.add('hidden');
     badgesContainer.innerHTML = `
       <button onclick="setSeriesFilter('ALL')" class="badge-btn px-3 py-1 text-xs rounded-lg font-medium bg-sky-600 text-white transition" data-val="ALL">全部</button>
       <button onclick="setSeriesFilter('iPhone 18')" class="badge-btn px-3 py-1 text-xs rounded-lg font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-val="iPhone 18">i18</button>
@@ -533,6 +574,7 @@ function renderCategoryControls() {
       <option value="512G">512G</option>
       <option value="1TB">1TB</option>
       <option value="2TB">2TB</option>
+      <option value="未標示">未標示</option>
     `;
 
     chartFilter.innerHTML = `
@@ -565,7 +607,8 @@ function renderCategoryControls() {
     if (gapSub) {
       gapSub.textContent = `比較 i13 ~ i18 各代最新成交行情與升級價差`;
     }
-  } else {
+  } else if (activeCategory === 'ipad_mini') {
+    if (chartSizeFilter) chartSizeFilter.classList.add('hidden');
     // iPad mini
     badgesContainer.innerHTML = `
       <button onclick="setSeriesFilter('ALL')" class="badge-btn px-3 py-1 text-xs rounded-lg font-medium bg-sky-600 text-white transition" data-val="ALL">全部</button>
@@ -585,6 +628,7 @@ function renderCategoryControls() {
       <option value="128G">128G</option>
       <option value="256G">256G</option>
       <option value="512G">512G</option>
+      <option value="未標示">未標示</option>
     `;
 
     chartFilter.innerHTML = `
@@ -612,7 +656,62 @@ function renderCategoryControls() {
     if (gapSub) {
       gapSub.textContent = `比較 mini 6 vs mini 7 最新行情與升級價差`;
     }
+  } else {
+    badgesContainer.innerHTML = `<button onclick="setSeriesFilter('ALL')" class="badge-btn px-3 py-1 text-xs rounded-lg font-medium bg-sky-600 text-white transition" data-val="ALL">全部</button><button onclick="setSeriesFilter('iPad Pro')" class="badge-btn px-3 py-1 text-xs rounded-lg font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-val="iPad Pro">iPad Pro</button>`;
+    const ipadProModels = (rawData?.items || []).filter(it => it.device_type === 'ipad_pro');
+    const ipadProChips = [...new Set(ipadProModels.map(it => it.model.match(/\bM\d+\b/)?.[0]).filter(Boolean))]
+      .sort((a, b) => Number(a.slice(1)) - Number(b.slice(1)));
+    modelSelect.innerHTML = `<option value="ALL">全部世代 / 版本</option>${ipadProChips.map(chip => `<option value="${chip}">${chip} 世代</option>`).join('')}<option value="WiFi">WiFi 版</option><option value="Cellular">Cellular 行動網路版</option>`;
+    capSelect.innerHTML = `<option value="ALL">全部容量</option>${CAPACITY_ORDER_CONFIG.ipad_pro.map(c => `<option value="${c}">${c}</option>`).join('')}`;
+    const chips = getIpadProChipGenerations();
+    chartFilter.innerHTML = `<option value="ALL">全部世代</option>${chips.map(chip => `<option value="${chip}">${chip} 世代</option>`).join('')}<option value="UNKNOWN">世代未辨識</option>`;
+    const sizes = getIpadProSizes();
+    if (chartSizeFilter) {
+      chartSizeFilter.innerHTML = `<option value="ALL">全部尺寸</option>${sizes.map(size => `<option value="${size}">${size === '12.9' ? '12 吋級（12.9 吋）' : `${size} 吋`}</option>`).join('')}<option value="UNKNOWN">尺寸未辨識</option>`;
+      chartSizeFilter.value = currentChartSize;
+      chartSizeFilter.classList.remove('hidden');
+    }
+    const gapFilter = document.getElementById('gap-spec-filter');
+    if (gapFilter) { gapFilter.innerHTML = `<option value="OVERALL" selected>iPad Pro 全規格最新成交</option><option value="AVG">iPad Pro 全規格均價</option>`; gapFilter.onchange = () => renderGenerationGapChart(); }
+    const gapTitle = document.getElementById('gap-chart-title');
+    const gapSub = document.getElementById('gap-chart-sub');
+    if (gapTitle) gapTitle.innerHTML = `<i data-lucide="arrow-up-right" class="w-4 h-4 mr-2 text-purple-400"></i>iPad Pro 最新成交行情`;
+    if (gapSub) gapSub.textContent = `涵蓋各世代、尺寸與連線版本`;
   }
+}
+
+function getIpadProChipGenerations() {
+  const chips = [...new Set((rawData?.items || [])
+    .filter(it => it.device_type === 'ipad_pro')
+    .map(it => it.model.match(/\bM\d+\b/)?.[0])
+    .filter(Boolean))];
+  return chips.sort((a, b) => Number(b.slice(1)) - Number(a.slice(1)));
+}
+
+function getIpadProSizes() {
+  const sizes = [...new Set((rawData?.items || [])
+    .filter(it => it.device_type === 'ipad_pro')
+    .map(it => it.model.match(/\b(11|12\.9|13)-inch\b/)?.[1])
+    .filter(Boolean))];
+  return sizes.sort((a, b) => Number(a) - Number(b));
+}
+
+function filterChartStats(stats, selection, sizeSelection = 'ALL') {
+  let filtered = stats;
+  if (activeCategory === 'ipad_pro') {
+    if (selection !== 'ALL') {
+      filtered = filtered.filter(s => selection === 'UNKNOWN'
+        ? s.model.includes('世代未明')
+        : s.model.match(/\bM\d+\b/)?.[0] === selection);
+    }
+    if (sizeSelection !== 'ALL') {
+      filtered = filtered.filter(s => sizeSelection === 'UNKNOWN'
+        ? s.model.includes('尺寸未明')
+        : s.model.match(/\b(11|12\.9|13)-inch\b/)?.[1] === sizeSelection);
+    }
+    return filtered;
+  }
+  return selection === 'ALL' ? filtered : filtered.filter(s => s.series === selection);
 }
 
 function updateKPIs(summary) {
@@ -755,6 +854,8 @@ function renderSummaryTable(stats, updateCache = true) {
         else if (st.model.includes('Plus')) submodel = 'Plus';
         else if (st.model.includes('mini')) submodel = 'mini';
         else submodel = '標準版';
+      } else if (activeCategory === 'ipad_pro' && st.model.match(/\bM\d+\b/)) {
+        submodel = st.model.match(/\bM\d+\b/)[0];
       } else {
         if (st.model.includes('Cellular')) submodel = 'Cellular';
         else if (st.model.includes('WiFi')) submodel = 'WiFi';
@@ -1049,6 +1150,8 @@ function applyCalculatorToFilters() {
     else if (modelVal.includes('Plus')) submodel = 'Plus';
     else if (modelVal.includes('mini')) submodel = 'mini';
     else submodel = '標準版';
+  } else if (activeCategory === 'ipad_pro' && /\bM\d+\b/.test(modelVal)) {
+    submodel = modelVal.match(/\bM\d+\b/)[0];
   } else {
     if (modelVal.includes('Cellular')) submodel = 'Cellular';
     else if (modelVal.includes('WiFi')) submodel = 'WiFi';
@@ -1088,12 +1191,14 @@ function toggleBargainFilter() {
 // Charts
 function initCharts(catData) {
   const filterEl = document.getElementById('chart-series-filter');
+  const sizeFilterEl = document.getElementById('chart-size-filter');
   if (filterEl) {
+    if (![...filterEl.options].some(option => option.value === currentChartSeries)) {
+      currentChartSeries = 'ALL';
+    }
     filterEl.value = currentChartSeries;
   }
-  const filtered = (!filterEl || currentChartSeries === 'ALL') 
-    ? catData.grouped_stats 
-    : catData.grouped_stats.filter(s => s.series === currentChartSeries);
+  const filtered = filterChartStats(catData.grouped_stats, filterEl ? currentChartSeries : 'ALL', sizeFilterEl ? currentChartSize : 'ALL');
 
   renderPriceRangeChart(filtered);
   renderTrendChart(catData.monthly_trends);
@@ -1102,9 +1207,14 @@ function initCharts(catData) {
   if (filterEl) {
     filterEl.onchange = (e) => {
       currentChartSeries = e.target.value;
-      const val = e.target.value;
-      const f = val === 'ALL' ? catData.grouped_stats : catData.grouped_stats.filter(s => s.series === val);
+      const f = filterChartStats(catData.grouped_stats, currentChartSeries, currentChartSize);
       renderPriceRangeChart(f);
+    };
+  }
+  if (sizeFilterEl) {
+    sizeFilterEl.onchange = (e) => {
+      currentChartSize = e.target.value;
+      renderPriceRangeChart(filterChartStats(catData.grouped_stats, currentChartSeries, currentChartSize));
     };
   }
 }
@@ -1115,7 +1225,7 @@ function renderPriceRangeChart(stats) {
 
   const SERIES_ORDER = [
     'iPhone 13', 'iPhone 14', 'iPhone 15', 'iPhone 16', 'iPhone 17', 'iPhone 18',
-    'iPad mini 6', 'iPad mini 7'
+    'iPad mini 6', 'iPad mini 7', 'iPad Pro'
   ];
   const CAPACITY_ORDER = ['64G', '128G', '256G', '512G', '1TB', '2TB'];
 
@@ -1130,6 +1240,21 @@ function renderPriceRangeChart(stats) {
   }
 
   function compareModelsOldToNewLowToHigh(a, b) {
+    if (activeCategory === 'ipad_pro') {
+      const aChip = Number(a.model.match(/\bM(\d+)\b/)?.[1] || 0);
+      const bChip = Number(b.model.match(/\bM(\d+)\b/)?.[1] || 0);
+      if (aChip !== bChip) return aChip - bChip;
+      const aSize = Number(a.model.match(/\b(11|12\.9|13)-inch\b/)?.[1] || 99);
+      const bSize = Number(b.model.match(/\b(11|12\.9|13)-inch\b/)?.[1] || 99);
+      if (aSize !== bSize) return aSize - bSize;
+      const aNetwork = a.model.includes('Cellular') ? 1 : 0;
+      const bNetwork = b.model.includes('Cellular') ? 1 : 0;
+      if (aNetwork !== bNetwork) return aNetwork - bNetwork;
+      const aCapacity = CAPACITY_ORDER.indexOf(a.capacity);
+      const bCapacity = CAPACITY_ORDER.indexOf(b.capacity);
+      return (aCapacity < 0 ? 99 : aCapacity) - (bCapacity < 0 ? 99 : bCapacity);
+    }
+
     // 1. Series: Oldest to Newest (i13 -> i14 -> i15 -> i16 -> i17 -> i18)
     const sIdxA = SERIES_ORDER.indexOf(a.series);
     const sIdxB = SERIES_ORDER.indexOf(b.series);
@@ -1155,7 +1280,7 @@ function renderPriceRangeChart(stats) {
   const currentChartSeries = filterDropdown ? filterDropdown.value : 'ALL';
 
   let topStats = [];
-  if (currentChartSeries !== 'ALL' || activeCategory === 'ipad_mini') {
+  if (currentChartSeries !== 'ALL' || activeCategory !== 'iphone') {
     // Show all valid models of the selected series/category, ordered by Tier & Capacity
     topStats = [...validStats].sort(compareModelsOldToNewLowToHigh);
   } else {
@@ -1194,7 +1319,16 @@ function renderPriceRangeChart(stats) {
     }
     return;
   }
-  const labels = topStats.map(s => `${s.model.replace('iPhone ', 'i').replace('iPad mini ', 'mini ')} ${s.capacity}`);
+  const labels = topStats.map(s => {
+    if (activeCategory === 'ipad_pro') {
+      const chip = s.model.match(/\bM\d+\b/)?.[0] || '?世代';
+      const size = s.model.match(/\b(11|12\.9|13)-inch\b/)?.[1];
+      const network = s.model.includes('Cellular') ? 'Cell' : 'WiFi';
+      const generationLabel = currentChartSeries === 'ALL' ? `${chip} ` : '';
+      return `${generationLabel}${size ? `${size}” ` : ''}${network} ${s.capacity}`;
+    }
+    return `${s.model.replace('iPhone ', 'i').replace('iPad mini ', 'mini ')} ${s.capacity}`;
+  });
 
   // Floating bar body data: [p25, p75]
   const candleBodies = topStats.map(s => {
@@ -1382,6 +1516,8 @@ function renderPriceRangeChart(stats) {
               else if (stat.model.includes('Plus')) submodel = 'Plus';
               else if (stat.model.includes('mini')) submodel = 'mini';
               else submodel = '標準版';
+            } else if (activeCategory === 'ipad_pro' && stat.model.match(/\bM\d+\b/)) {
+              submodel = stat.model.match(/\bM\d+\b/)[0];
             } else {
               if (stat.model.includes('Cellular')) submodel = 'Cellular';
               else if (stat.model.includes('WiFi')) submodel = 'WiFi';
@@ -1531,7 +1667,7 @@ function renderGenerationGapChart() {
   const isIphone = activeCategory === 'iphone';
   const seriesList = isIphone
     ? ['iPhone 13', 'iPhone 14', 'iPhone 15', 'iPhone 16', 'iPhone 17', 'iPhone 18']
-    : ['iPad mini 6', 'iPad mini 7'];
+    : activeCategory === 'ipad_mini' ? ['iPad mini 6', 'iPad mini 7'] : ['iPad Pro'];
 
   const shortLabels = {
     'iPhone 13': 'i13',
@@ -1561,6 +1697,7 @@ function renderGenerationGapChart() {
   const allSold = (rawData && rawData.items ? rawData.items : []).filter(it => {
     if (it.status !== '已售出') return false;
     if (!it.price || it.price < 3000) return false;
+    if (it.market_eligible === false) return false;
     if (currentDateRange.startDate && it.date < currentDateRange.startDate) return false;
     if (currentDateRange.endDate && it.date > currentDateRange.endDate) return false;
     return true;
@@ -1950,6 +2087,8 @@ function resetAllFilters() {
   if (capSelect) capSelect.value = 'ALL';
   const statusSelect = document.getElementById('filter-status');
   if (statusSelect) statusSelect.value = 'ALL';
+  const qualitySelect = document.getElementById('filter-quality');
+  if (qualitySelect) qualitySelect.value = 'ALL';
   const kwInput = document.getElementById('filter-keyword');
   if (kwInput) kwInput.value = '';
 
@@ -1966,6 +2105,7 @@ function applyFilters() {
   const modelVal = document.getElementById('filter-model').value;
   const capVal = document.getElementById('filter-capacity').value;
   const statusVal = document.getElementById('filter-status').value;
+  const qualityVal = document.getElementById('filter-quality')?.value || 'ALL';
   const keyword = document.getElementById('filter-keyword').value.trim().toLowerCase();
 
   // Check if keyword is a direct URL or Article ID lookup
@@ -1981,6 +2121,11 @@ function applyFilters() {
 
     // Device Category filter
     if (item.device_type !== activeCategory) return false;
+
+    const qualityFlags = Array.isArray(item.quality_flags) ? item.quality_flags : [];
+    const hasQualityConcerns = item.quality_score == null || qualityFlags.length > 0;
+    if (qualityVal === 'REVIEW' && !hasQualityConcerns) return false;
+    if (qualityVal === 'GOOD' && hasQualityConcerns) return false;
 
     // Filter out pure accessory items (cases, tempered films, screen protectors)
     const titleLower = (item.title || '').toLowerCase();
@@ -2016,8 +2161,10 @@ function applyFilters() {
         } else if (modelVal === 'mini') {
           if (!item.model.includes('mini')) return false;
         }
+      } else if (activeCategory === 'ipad_pro' && /^M\d+$/.test(modelVal)) {
+        if (!item.model.includes(` ${modelVal} `)) return false;
       } else {
-        // iPad mini
+        // iPad mini / Pro connectivity filter
         if (modelVal === 'WiFi') {
           if (!item.model.includes('WiFi')) return false;
         } else if (modelVal === 'Cellular') {
@@ -2052,7 +2199,7 @@ function applyFilters() {
     return true;
   });
 
-  updateFilterChips(modelVal, capVal, statusVal, keyword);
+  updateFilterChips(modelVal, capVal, statusVal, keyword, qualityVal);
   syncSummaryTableHighlight(currentFilters.series, modelVal, capVal);
 
   sortItems();
@@ -2060,7 +2207,7 @@ function applyFilters() {
   renderArticlesTable();
 }
 
-function updateFilterChips(modelVal, capVal, statusVal, keyword) {
+function updateFilterChips(modelVal, capVal, statusVal, keyword, qualityVal = 'ALL') {
   const container = document.getElementById('active-filter-chips');
   if (!container) return;
 
@@ -2082,6 +2229,9 @@ function updateFilterChips(modelVal, capVal, statusVal, keyword) {
   }
   if (statusVal !== 'ALL') {
     chips.push(`<span class="inline-flex items-center px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 text-xs font-mono">${statusVal}</span>`);
+  }
+  if (qualityVal !== 'ALL') {
+    chips.push(`<span class="inline-flex items-center px-2 py-0.5 rounded bg-amber-900/60 border border-amber-700/60 text-amber-200 text-xs font-mono">${qualityVal === 'REVIEW' ? '需複核' : '無疑慮'}</span>`);
   }
   if (keyword) {
     chips.push(`<span class="inline-flex items-center px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 text-xs font-mono">搜尋: "${keyword}"</span>`);
@@ -2238,6 +2388,12 @@ function renderArticlesTable() {
       }
     }
 
+    const itemQualityFlags = Array.isArray(item.quality_flags) ? item.quality_flags : [];
+    const qualityScoreLabel = item.quality_score == null ? '未評估' : `解析 ${item.quality_score}%`;
+    const qualityTitle = item.quality_score == null ? '舊資料尚未套用品質檢查' : itemQualityFlags.length ? itemQualityFlags.join('、') : '未發現解析疑慮';
+    const marketExcludedLabel = item.market_eligible === false ? ' · 不納入行情' : '';
+    statusBadgeHtml += `<span title="${qualityTitle}" class="inline-block mt-1 px-1.5 py-0.5 rounded text-[10px] ${itemQualityFlags.length || item.quality_score == null ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30' : 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20'}">${qualityScoreLabel}${itemQualityFlags.length || item.quality_score == null ? ' · 需複核' : ''}${marketExcludedLabel}</span>`;
+
     const priceText = item.price ? `NT$ ${item.price.toLocaleString()}` : (item.raw_price || '面議/未標');
     
     // Battery styling
@@ -2309,9 +2465,12 @@ function exportCSV() {
     return;
   }
 
-  const headers = ['狀態', '日期', '地點', '類別', '系列', '機型', '容量', '售價(NTD)', '電池健康度', '保固狀態', '標題', '連結'];
+  const headers = ['狀態', '解析信心度', '行情統計採用', '品質疑慮', '日期', '地點', '類別', '系列', '機型', '容量', '售價(NTD)', '電池健康度', '保固狀態', '標題', '連結'];
   const rows = filteredItems.map(it => [
     it.status,
+    it.quality_score ?? '',
+    it.market_eligible === false ? '否' : '是',
+    (it.quality_flags || []).join('、'),
     it.date,
     it.location || '全國',
     it.device_type,
@@ -2335,7 +2494,398 @@ function exportCSV() {
   URL.revokeObjectURL(url);
 }
 
+// ==========================================
+// iPad mini Generational Comparison Logic
+// ==========================================
+let miniCompareItems = [];
+let miniFilteredItems = [];
+let miniCurrentPage = 1;
+const miniPageSize = 15;
+let miniCurrentFilters = {
+  gen: 'ALL',
+  conn: 'ALL',
+  capacity: 'ALL',
+  sort: 'date_desc',
+  keyword: ''
+};
+
+function renderMiniCompareView() {
+  if (!rawData || !rawData.items) return;
+
+  // Extract all ipad_mini sold items with valid price
+  miniCompareItems = rawData.items.filter(it => 
+    it.device_type === 'ipad_mini' &&
+    it.status === '已售出' &&
+    it.price && it.price >= 1500
+  );
+
+  // Update counts on generation overview cards
+  const mini7Items = miniCompareItems.filter(it => it.series === 'iPad mini 7');
+  const mini6Items = miniCompareItems.filter(it => it.series === 'iPad mini 6');
+  const mini5Items = miniCompareItems.filter(it => it.series === 'iPad mini 5');
+  const mini4Items = miniCompareItems.filter(it => it.series === 'iPad mini 4');
+
+  const el7 = document.getElementById('mini7-sold-count');
+  const el6 = document.getElementById('mini6-sold-count');
+  const el5 = document.getElementById('mini5-sold-count');
+  const el4 = document.getElementById('mini4-sold-count');
+  if (el7) el7.textContent = `成交 ${mini7Items.length} 筆`;
+  if (el6) el6.textContent = `成交 ${mini6Items.length} 筆`;
+  if (el5) el5.textContent = `成交 ${mini5Items.length} 筆`;
+  if (el4) el4.textContent = `成交 ${mini4Items.length} 筆`;
+
+  renderMiniCompareSummaryTable();
+  applyMiniFilters();
+}
+
+function renderMiniCompareSummaryTable() {
+  const tbody = document.getElementById('mini-compare-summary-tbody');
+  if (!tbody) return;
+
+  // Group items by series, connectivity, capacity
+  const groups = {};
+
+  miniCompareItems.forEach(it => {
+    const isCell = it.model && it.model.includes('Cellular');
+    const conn = isCell ? 'Cellular' : 'WiFi';
+    const cap = it.capacity || '未標示';
+    const key = `${it.series}|${conn}|${cap}`;
+
+    if (!groups[key]) {
+      groups[key] = {
+        series: it.series,
+        conn: conn,
+        capacity: cap,
+        prices: [],
+        latest: null,
+        items: []
+      };
+    }
+    groups[key].prices.push(it.price);
+    groups[key].items.push(it);
+    if (!groups[key].latest || it.date > groups[key].latest.date) {
+      groups[key].latest = { price: it.price, date: it.date, title: it.title, url: it.url };
+    }
+  });
+
+  // Calculate statistics for each group
+  const groupStats = {};
+  Object.keys(groups).forEach(k => {
+    const g = groups[k];
+    const prices = g.prices.slice().sort((a, b) => a - b);
+    const count = prices.length;
+    const min = prices[0];
+    const max = prices[count - 1];
+    const midIdx = Math.floor(count / 2);
+    const median = count % 2 === 0 ? Math.round((prices[midIdx - 1] + prices[midIdx]) / 2) : prices[midIdx];
+    const avg = Math.round(prices.reduce((sum, p) => sum + p, 0) / count);
+    groupStats[k] = { ...g, count, min, max, median, avg };
+  });
+
+  // Define display rows order and generation difference mappings
+  const displaySpecs = [
+    // mini 7
+    { series: 'iPad mini 7', conn: 'WiFi', cap: '128G', compareKey: 'iPad mini 6|WiFi|64G', diffLabel: 'vs mini 6 (64G)' },
+    { series: 'iPad mini 7', conn: 'WiFi', cap: '256G', compareKey: 'iPad mini 6|WiFi|256G', diffLabel: 'vs mini 6 (256G)' },
+    { series: 'iPad mini 7', conn: 'WiFi', cap: '512G', compareKey: null, diffLabel: '旗艦頂規' },
+    { series: 'iPad mini 7', conn: 'Cellular', cap: '128G', compareKey: 'iPad mini 6|Cellular|64G', diffLabel: 'vs mini 6 LTE' },
+    { series: 'iPad mini 7', conn: 'Cellular', cap: '256G', compareKey: 'iPad mini 6|Cellular|256G', diffLabel: 'vs mini 6 256G LTE' },
+    // mini 6
+    { series: 'iPad mini 6', conn: 'WiFi', cap: '64G', compareKey: 'iPad mini 5|WiFi|64G', diffLabel: 'vs mini 5 (64G)' },
+    { series: 'iPad mini 6', conn: 'WiFi', cap: '256G', compareKey: 'iPad mini 5|WiFi|256G', diffLabel: 'vs mini 5 (256G)' },
+    { series: 'iPad mini 6', conn: 'Cellular', cap: '64G', compareKey: 'iPad mini 5|Cellular|64G', diffLabel: 'vs mini 5 LTE' },
+    { series: 'iPad mini 6', conn: 'Cellular', cap: '256G', compareKey: 'iPad mini 5|Cellular|256G', diffLabel: 'vs mini 5 256G LTE' },
+    // mini 5
+    { series: 'iPad mini 5', conn: 'WiFi', cap: '64G', compareKey: 'iPad mini 4|WiFi|64G', diffLabel: 'vs mini 4 (64G)' },
+    { series: 'iPad mini 5', conn: 'WiFi', cap: '256G', compareKey: 'iPad mini 4|WiFi|128G', diffLabel: 'vs mini 4 (128G)' },
+    { series: 'iPad mini 5', conn: 'Cellular', cap: '64G', compareKey: null, diffLabel: '經典插卡款' },
+    { series: 'iPad mini 5', conn: 'Cellular', cap: '256G', compareKey: null, diffLabel: '高容插卡款' },
+    // mini 4
+    { series: 'iPad mini 4', conn: 'WiFi', cap: '64G', compareKey: null, diffLabel: '舊代基準' },
+    { series: 'iPad mini 4', conn: 'WiFi', cap: '128G', compareKey: null, diffLabel: '高容閱讀機' },
+    { series: 'iPad mini 4', conn: 'Cellular', cap: '64G', compareKey: null, diffLabel: '舊款插卡' }
+  ];
+
+  let html = '';
+  displaySpecs.forEach(spec => {
+    const key = `${spec.series}|${spec.conn}|${spec.cap}`;
+    const st = groupStats[key];
+    if (!st || st.count === 0) return;
+
+    // Series badge color
+    let sBadgeClass = 'bg-slate-800 text-slate-300 border-slate-700';
+    if (spec.series === 'iPad mini 7') sBadgeClass = 'bg-amber-500/20 text-amber-300 border-amber-500/30';
+    else if (spec.series === 'iPad mini 6') sBadgeClass = 'bg-sky-500/20 text-sky-300 border-sky-500/30';
+    else if (spec.series === 'iPad mini 5') sBadgeClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
+    else if (spec.series === 'iPad mini 4') sBadgeClass = 'bg-purple-500/20 text-purple-300 border-purple-500/30';
+
+    // Connectivity badge
+    const connBadge = spec.conn === 'Cellular' 
+      ? '<span class="px-1.5 py-0.5 text-[10px] rounded bg-sky-500/20 text-sky-300 border border-sky-500/30">Cellular</span>'
+      : '<span class="px-1.5 py-0.5 text-[10px] rounded bg-slate-800 text-slate-400 border border-slate-700">WiFi</span>';
+
+    // Generational Diff calculation
+    let diffHtml = '<span class="text-slate-500">-</span>';
+    if (spec.compareKey && groupStats[spec.compareKey]) {
+      const prevSt = groupStats[spec.compareKey];
+      const diffVal = st.median - prevSt.median;
+      const pct = ((diffVal / prevSt.median) * 100).toFixed(1);
+      const sign = diffVal >= 0 ? '+' : '';
+      const color = diffVal >= 0 ? 'text-amber-400' : 'text-emerald-400';
+      diffHtml = `<span class="${color} font-bold">${sign}NT$ ${diffVal.toLocaleString()}</span> <span class="text-[10px] text-slate-400">(${sign}${pct}%)</span>`;
+    } else if (spec.diffLabel) {
+      diffHtml = `<span class="text-slate-400 text-[11px]">${spec.diffLabel}</span>`;
+    }
+
+    const latestText = st.latest ? `NT$ ${st.latest.price.toLocaleString()} <span class="text-[10px] text-slate-500">(${st.latest.date.slice(5)})</span>` : '-';
+
+    html += `
+      <tr class="hover:bg-slate-800/40 transition cursor-pointer" onclick="quickFilterMini('${spec.series}', '${spec.cap}', '${spec.conn}')">
+        <td class="py-3 px-4 whitespace-nowrap">
+          <span class="px-2 py-0.5 text-xs font-semibold rounded-lg border ${sBadgeClass}">${spec.series}</span>
+        </td>
+        <td class="py-3 px-4 whitespace-nowrap">${connBadge}</td>
+        <td class="py-3 px-4 font-bold text-white whitespace-nowrap">${spec.cap}</td>
+        <td class="py-3 px-4 text-center font-bold text-slate-300 whitespace-nowrap">${st.count} 筆</td>
+        <td class="py-3 px-4 font-bold text-emerald-400 whitespace-nowrap">${latestText}</td>
+        <td class="py-3 px-4 font-bold text-emerald-400 whitespace-nowrap">NT$ ${st.median.toLocaleString()}</td>
+        <td class="py-3 px-4 text-emerald-300/80 whitespace-nowrap">NT$ ${st.avg.toLocaleString()}</td>
+        <td class="py-3 px-4 text-slate-300 whitespace-nowrap">NT$ ${st.min.toLocaleString()} ~ ${st.max.toLocaleString()}</td>
+        <td class="py-3 px-4 whitespace-nowrap">${diffHtml}</td>
+      </tr>
+    `;
+  });
+
+  tbody.innerHTML = html;
+}
+
+function quickFilterMini(series, cap, conn) {
+  setMiniGenFilter(series);
+  const capEl = document.getElementById('mini-filter-cap');
+  const connEl = document.getElementById('mini-filter-conn');
+  if (capEl) capEl.value = cap;
+  if (connEl) connEl.value = conn;
+  applyMiniFilters();
+  const el = document.getElementById('mini-transactions-section');
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
+
+function setMiniGenFilter(gen) {
+  miniCurrentFilters.gen = gen;
+  document.querySelectorAll('#mini-gen-pills .mini-gen-btn').forEach(btn => {
+    if (btn.getAttribute('data-gen') === gen) {
+      btn.className = 'mini-gen-btn px-3 py-1 text-xs rounded-lg font-semibold bg-amber-500 text-slate-950 transition active:scale-95';
+    } else {
+      btn.className = 'mini-gen-btn px-3 py-1 text-xs rounded-lg font-medium bg-slate-800 text-slate-300 hover:text-white transition active:scale-95';
+    }
+  });
+  applyMiniFilters();
+}
+
+function applyMiniFilters() {
+  const connVal = document.getElementById('mini-filter-conn') ? document.getElementById('mini-filter-conn').value : 'ALL';
+  const capVal = document.getElementById('mini-filter-cap') ? document.getElementById('mini-filter-cap').value : 'ALL';
+  const sortVal = document.getElementById('mini-sort-order') ? document.getElementById('mini-sort-order').value : 'date_desc';
+  const kwVal = document.getElementById('mini-filter-kw') ? document.getElementById('mini-filter-kw').value.trim().toLowerCase() : '';
+
+  miniCurrentFilters.conn = connVal;
+  miniCurrentFilters.capacity = capVal;
+  miniCurrentFilters.sort = sortVal;
+  miniCurrentFilters.keyword = kwVal;
+
+  let items = miniCompareItems.slice();
+
+  // Gen filter
+  if (miniCurrentFilters.gen !== 'ALL') {
+    items = items.filter(it => it.series === miniCurrentFilters.gen);
+  }
+
+  // Conn filter
+  if (connVal !== 'ALL') {
+    if (connVal === 'Cellular') {
+      items = items.filter(it => it.model && it.model.includes('Cellular'));
+    } else {
+      items = items.filter(it => !it.model || !it.model.includes('Cellular'));
+    }
+  }
+
+  // Cap filter
+  if (capVal !== 'ALL') {
+    items = items.filter(it => it.capacity === capVal);
+  }
+
+  // Keyword filter
+  if (kwVal) {
+    items = items.filter(it => 
+      (it.title && it.title.toLowerCase().includes(kwVal)) ||
+      (it.location && it.location.toLowerCase().includes(kwVal)) ||
+      (it.model && it.model.toLowerCase().includes(kwVal))
+    );
+  }
+
+  // Sorting
+  if (sortVal === 'date_desc') {
+    items.sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
+  } else if (sortVal === 'price_asc') {
+    items.sort((a, b) => (a.price || 0) - (b.price || 0));
+  } else if (sortVal === 'price_desc') {
+    items.sort((a, b) => (b.price || 0) - (a.price || 0));
+  }
+
+  miniFilteredItems = items;
+  miniCurrentPage = 1;
+  renderMiniTransactionsTable();
+}
+
+function resetMiniFilters() {
+  setMiniGenFilter('ALL');
+  const connEl = document.getElementById('mini-filter-conn');
+  const capEl = document.getElementById('mini-filter-cap');
+  const sortEl = document.getElementById('mini-sort-order');
+  const kwEl = document.getElementById('mini-filter-kw');
+  if (connEl) connEl.value = 'ALL';
+  if (capEl) capEl.value = 'ALL';
+  if (sortEl) sortEl.value = 'date_desc';
+  if (kwEl) kwEl.value = '';
+  applyMiniFilters();
+}
+
+function renderMiniTransactionsTable() {
+  const tbody = document.getElementById('mini-transactions-tbody');
+  const countEl = document.getElementById('mini-tx-count');
+  if (countEl) countEl.textContent = miniFilteredItems.length.toLocaleString();
+
+  const total = miniFilteredItems.length;
+  const totalPages = Math.max(1, Math.ceil(total / miniPageSize));
+  miniCurrentPage = Math.min(miniCurrentPage, totalPages);
+
+  const startIdx = (miniCurrentPage - 1) * miniPageSize;
+  const endIdx = Math.min(startIdx + miniPageSize, total);
+  const pageItems = miniFilteredItems.slice(startIdx, endIdx);
+
+  const pStart = document.getElementById('mini-page-start');
+  const pEnd = document.getElementById('mini-page-end');
+  const pTotal = document.getElementById('mini-page-total');
+  const pCur = document.getElementById('mini-page-current');
+  const btnPrev = document.getElementById('mini-btn-prev');
+  const btnNext = document.getElementById('mini-btn-next');
+
+  if (pStart) pStart.textContent = total === 0 ? 0 : startIdx + 1;
+  if (pEnd) pEnd.textContent = endIdx;
+  if (pTotal) pTotal.textContent = total.toLocaleString();
+  if (pCur) pCur.textContent = `${miniCurrentPage} / ${totalPages}`;
+  if (btnPrev) btnPrev.disabled = miniCurrentPage <= 1;
+  if (btnNext) btnNext.disabled = miniCurrentPage >= totalPages;
+
+  if (!tbody) return;
+
+  if (pageItems.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" class="py-12 text-center text-slate-500 text-xs">
+          無符合條件的成交貼文，請嘗試放寬篩選條件或清除關鍵字。
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  let html = '';
+  pageItems.forEach(it => {
+    const isCell = it.model && it.model.includes('Cellular');
+    const connBadge = isCell
+      ? '<span class="px-1.5 py-0.5 text-[10px] rounded bg-sky-500/20 text-sky-300 border border-sky-500/30">Cellular</span>'
+      : '<span class="px-1.5 py-0.5 text-[10px] rounded bg-slate-800 text-slate-400 border border-slate-700">WiFi</span>';
+
+    let sBadgeClass = 'bg-slate-800 text-slate-300 border-slate-700';
+    if (it.series === 'iPad mini 7') sBadgeClass = 'bg-amber-500/20 text-amber-300 border-amber-500/30';
+    else if (it.series === 'iPad mini 6') sBadgeClass = 'bg-sky-500/20 text-sky-300 border-sky-500/30';
+    else if (it.series === 'iPad mini 5') sBadgeClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
+    else if (it.series === 'iPad mini 4') sBadgeClass = 'bg-purple-500/20 text-purple-300 border-purple-500/30';
+
+    html += `
+      <tr class="hover:bg-slate-800/40 transition">
+        <td class="py-3 px-4 font-mono text-slate-400 whitespace-nowrap text-xs">${it.date}</td>
+        <td class="py-3 px-4 whitespace-nowrap">
+          <span class="px-2 py-0.5 text-[11px] font-semibold rounded-lg border ${sBadgeClass}">${it.series}</span>
+        </td>
+        <td class="py-3 px-4 font-bold text-white whitespace-nowrap">${it.capacity || '未標示'}</td>
+        <td class="py-3 px-4 whitespace-nowrap">${connBadge}</td>
+        <td class="py-3 px-4 whitespace-nowrap">
+          <span class="text-sm font-black text-emerald-400 font-mono">NT$ ${(it.price || 0).toLocaleString()}</span>
+        </td>
+        <td class="py-3 px-4 text-slate-200 font-normal">
+          <a href="${it.url}" target="_blank" class="hover:text-amber-400 transition hover:underline line-clamp-1" title="${it.title}">
+            ${it.title}
+          </a>
+        </td>
+        <td class="py-3 px-4 text-right whitespace-nowrap">
+          <a href="${it.url}" target="_blank" class="inline-flex items-center px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white text-[11px] transition">
+            前往原文 <i data-lucide="external-link" class="w-3 h-3 ml-1 text-slate-400"></i>
+          </a>
+        </td>
+      </tr>
+    `;
+  });
+
+  tbody.innerHTML = html;
+  if (window.lucide) window.lucide.createIcons();
+}
+
+function prevMiniPage() {
+  if (miniCurrentPage > 1) {
+    miniCurrentPage--;
+    renderMiniTransactionsTable();
+  }
+}
+
+function nextMiniPage() {
+  const totalPages = Math.ceil(miniFilteredItems.length / miniPageSize);
+  if (miniCurrentPage < totalPages) {
+    miniCurrentPage++;
+    renderMiniTransactionsTable();
+  }
+}
+
+function exportMiniCompareCSV() {
+  if (!miniFilteredItems || miniFilteredItems.length === 0) {
+    alert('目前無成交資料可匯出');
+    return;
+  }
+
+  const headers = ['成交日期', '世代', '型號規格', '容量', '連線版本', '成交金額(NTD)', '文章標題', 'PTT原文網址'];
+  const rows = miniFilteredItems.map(it => {
+    const isCell = it.model && it.model.includes('Cellular');
+    return [
+      it.date,
+      it.series,
+      it.model,
+      it.capacity || '未標示',
+      isCell ? 'Cellular' : 'WiFi',
+      it.price || '',
+      `"${(it.title || '').replace(/"/g, '""')}"`,
+      it.url
+    ];
+  });
+
+  const csvContent = "\uFEFF" + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `PTT_MacShop_iPad_mini_成交清單_${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 // Expose global functions to window
+window.setMiniGenFilter = setMiniGenFilter;
+window.quickFilterMini = quickFilterMini;
+window.applyMiniFilters = applyMiniFilters;
+window.resetMiniFilters = resetMiniFilters;
+window.prevMiniPage = prevMiniPage;
+window.nextMiniPage = nextMiniPage;
+window.exportMiniCompareCSV = exportMiniCompareCSV;
 window.setDatePreset = setDatePreset;
 window.onCustomDateChange = onCustomDateChange;
 window.resetDateRange = resetDateRange;

@@ -1,5 +1,6 @@
 import sqlite3
 import os
+import time
 
 DB_DIR = os.path.join(os.path.dirname(__file__), "data")
 DB_PATH = os.path.join(DB_DIR, "macshop.db")
@@ -52,6 +53,8 @@ def init_db():
             url TEXT NOT NULL,
             title TEXT NOT NULL,
             raw_price_str TEXT,
+            quality_score INTEGER,
+            quality_flags TEXT,
             FOREIGN KEY(article_id) REFERENCES raw_articles(article_id)
         )
     """)
@@ -62,6 +65,10 @@ def init_db():
         cursor.execute("ALTER TABLE parsed_items ADD COLUMN device_type TEXT NOT NULL DEFAULT 'iphone'")
     if "warranty" not in cols:
         cursor.execute("ALTER TABLE parsed_items ADD COLUMN warranty TEXT DEFAULT '已過保'")
+    if "quality_score" not in cols:
+        cursor.execute("ALTER TABLE parsed_items ADD COLUMN quality_score INTEGER")
+    if "quality_flags" not in cols:
+        cursor.execute("ALTER TABLE parsed_items ADD COLUMN quality_flags TEXT")
 
     # Migration: check if is_parsed column exists in raw_articles
     cursor.execute("PRAGMA table_info(raw_articles)")
@@ -143,10 +150,12 @@ def save_parsed_items(items):
     cursor.executemany("""
         INSERT INTO parsed_items 
         (article_id, device_type, series, model, capacity, price, status, sold_in_title, sold_in_body, 
-         location, battery, warranty, date_str, timestamp, url, title, raw_price_str)
+         location, battery, warranty, date_str, timestamp, url, title, raw_price_str,
+         quality_score, quality_flags)
         VALUES 
         (:article_id, :device_type, :series, :model, :capacity, :price, :status, :sold_in_title, :sold_in_body,
-         :location, :battery, :warranty, :date_str, :timestamp, :url, :title, :raw_price_str)
+         :location, :battery, :warranty, :date_str, :timestamp, :url, :title, :raw_price_str,
+         :quality_score, :quality_flags)
     """, items)
     conn.commit()
     conn.close()
@@ -158,6 +167,45 @@ def get_all_parsed_items():
     rows = cursor.fetchall()
     conn.close()
     return rows
+
+def get_stale_articles(max_age_days=30):
+    """
+    Returns raw_articles that:
+    - Are within the past `max_age_days` days (by timestamp)
+    - Have at least one parsed_item with status NOT '已售出'
+    These are candidates for re-fetching to detect post-edit status changes
+    (e.g., seller edits the body to add '已售出' after initial crawl).
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+    cutoff_ts = int(time.time() - max_age_days * 86400)
+    cursor.execute("""
+        SELECT DISTINCT r.article_id, r.url, r.query_keyword,
+                        r.title, r.author, r.timestamp
+        FROM raw_articles r
+        INNER JOIN parsed_items p ON r.article_id = p.article_id
+        WHERE r.timestamp >= ?
+          AND p.status != '已售出'
+        ORDER BY r.timestamp DESC
+    """, (cutoff_ts,))
+    rows = cursor.fetchall()
+    conn.close()
+    return rows
+
+def update_raw_html(article_id, raw_html):
+    """
+    Update the stored HTML of an existing article and reset is_parsed = 0
+    so the analyzer will re-parse it on next run.
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE raw_articles
+        SET raw_html = ?, is_parsed = 0
+        WHERE article_id = ?
+    """, (raw_html, article_id))
+    conn.commit()
+    conn.close()
 
 if __name__ == "__main__":
     init_db()

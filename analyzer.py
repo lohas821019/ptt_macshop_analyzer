@@ -1,6 +1,7 @@
 import json
 import os
 import datetime
+from collections import defaultdict
 import numpy as np
 import database
 import parser
@@ -52,8 +53,49 @@ def calculate_stats(prices):
         "p75": int(round(np.percentile(arr, 75)))
     }
 
+def flag_price_outliers(items):
+    """Flag extreme prices within a model/capacity group without deleting records."""
+    groups = defaultdict(list)
+    for item in items:
+        flags = json.loads(item['quality_flags']) if item.get('quality_flags') else []
+        if item.get('price') is not None and not any(f in flags for f in ("價格欄含多個金額", "疑似合售")):
+            groups[(item['device_type'], item['model'], item['capacity'], item['status'])].append(item)
+
+    for group_items in groups.values():
+        if len(group_items) < 8:
+            continue
+        prices = np.array([it['price'] for it in group_items], dtype=float)
+        q1, q3 = np.percentile(prices, [25, 75])
+        spread = q3 - q1
+        if spread > 0:
+            lower, upper = q1 - 1.5 * spread, q3 + 1.5 * spread
+        else:
+            median = float(np.median(prices))
+            lower, upper = median * 0.7, median * 1.3
+        for item in group_items:
+            if item['price'] < lower or item['price'] > upper:
+                flags = json.loads(item['quality_flags']) if item.get('quality_flags') else []
+                if "價格疑似離群" not in flags:
+                    flags.append("價格疑似離群")
+                item['quality_flags'] = json.dumps(flags, ensure_ascii=False)
+                if item.get('quality_score') is not None:
+                    item['quality_score'] = max(0, item['quality_score'] - 25)
+
+    excluded_flags = {
+        "價格欄含多個金額", "疑似合售", "價格疑似離群",
+        "容量未明確標示", "容量規格不符", "世代未辨識", "尺寸未辨識"
+    }
+    for item in items:
+        flags = json.loads(item['quality_flags']) if item.get('quality_flags') else []
+        item['market_eligible'] = (
+            item.get('quality_score') is not None
+            and item.get('price') is not None
+            and not any(flag in excluded_flags for flag in flags)
+        )
+
 def analyze_category_data(items, series_order, capacity_order):
-    items_with_price = [it for it in items if it['price'] is not None and it['price'] >= 3000]
+    min_price_threshold = 1500 if any(it.get('device_type') == 'ipad_mini' for it in items) else 3000
+    items_with_price = [it for it in items if it['price'] is not None and it['price'] >= min_price_threshold and it.get('market_eligible', True)]
     sold_items = [it for it in items_with_price if it['status'] == '已售出']
     reserved_items = [it for it in items_with_price if it['status'] == '暫售']
     pending_items = [it for it in items_with_price if it['status'] == '洽中']
@@ -188,57 +230,73 @@ def analyze(force_reparse=False):
     # Check for unparsed raw articles
     unparsed_rows = database.get_unparsed_raw_articles()
     if unparsed_rows:
-        print(f"[*] Incrementally parsing {len(unparsed_rows)} new raw articles...")
-        new_items = []
-        parsed_article_ids = []
-        for r in unparsed_rows:
-            items = parser.parse_article_html(
-                article_id=r['article_id'],
-                url=r['url'],
-                title=r['title'],
-                author=r['author'],
-                timestamp=r['timestamp'],
-                raw_html=r['raw_html']
-            )
-            new_items.extend(items)
-            parsed_article_ids.append(r['article_id'])
+        total_unparsed = len(unparsed_rows)
+        print(f"[*] Incrementally parsing {total_unparsed} new raw articles...")
+        batch_size = 1000
+        total_saved = 0
+        for i in range(0, total_unparsed, batch_size):
+            chunk = unparsed_rows[i:i + batch_size]
+            batch_items = []
+            batch_aids = []
+            for r in chunk:
+                items = parser.parse_article_html(
+                    article_id=r['article_id'],
+                    url=r['url'],
+                    title=r['title'],
+                    author=r['author'],
+                    timestamp=r['timestamp'],
+                    raw_html=r['raw_html']
+                )
+                batch_items.extend(items)
+                batch_aids.append(r['article_id'])
 
-        if new_items:
-            database.save_parsed_items(new_items)
-            print(f"[OK] Parsed and saved {len(new_items)} new valid items.")
-        database.mark_articles_as_parsed(parsed_article_ids)
+            if batch_items:
+                database.save_parsed_items(batch_items)
+                total_saved += len(batch_items)
+            database.mark_articles_as_parsed(batch_aids)
+            processed = min(i + batch_size, total_unparsed)
+            print(f"[*] Parsed {processed}/{total_unparsed} articles ({total_saved} items saved)...")
+        print(f"[OK] Parsed and saved {total_saved} valid items in total.")
     else:
         print("[*] All raw articles already parsed in local database. Loading cached records...")
 
     # Load all parsed items directly from database (sub-second fast load)
     all_rows = database.get_all_parsed_items()
     all_items = [dict(r) for r in all_rows]
+    flag_price_outliers(all_items)
     print(f"[*] Total valid parsed items in database: {len(all_items)}")
 
-    # Total articles count from raw_articles for summary
+    # Count distinct parsed source articles by device category. Counting titles
+    # with a generic "販售" keyword would mix iPhone and iPad posts together.
     conn = database.get_connection()
     c = conn.cursor()
-    c.execute("SELECT COUNT(*) FROM raw_articles WHERE title LIKE '%iphone%' OR title LIKE '%販售%'")
+    c.execute("SELECT COUNT(DISTINCT article_id) FROM parsed_items WHERE device_type = 'iphone'")
     iphone_total_articles = c.fetchone()[0]
-    c.execute("SELECT COUNT(*) FROM raw_articles WHERE title LIKE '%ipad%'")
+    c.execute("SELECT COUNT(DISTINCT article_id) FROM parsed_items WHERE device_type = 'ipad_mini'")
     ipad_total_articles = c.fetchone()[0]
+    c.execute("SELECT COUNT(DISTINCT article_id) FROM parsed_items WHERE device_type = 'ipad_pro'")
+    ipad_pro_total_articles = c.fetchone()[0]
     conn.close()
 
     # Separate items by device_type
     iphone_items = [it for it in all_items if it['device_type'] == 'iphone']
     ipad_items = [it for it in all_items if it['device_type'] == 'ipad_mini']
+    ipad_pro_items = [it for it in all_items if it['device_type'] == 'ipad_pro']
 
     # Analyze iPhone
     iphone_series_order = ["iPhone 18", "iPhone 17", "iPhone 16", "iPhone 15", "iPhone 14", "iPhone 13"]
-    iphone_capacity_order = ["128G", "256G", "512G", "1TB", "2TB", "64G"]
+    iphone_capacity_order = ["128G", "256G", "512G", "1TB", "2TB", "64G", "未標示"]
     iphone_data = analyze_category_data(iphone_items, iphone_series_order, iphone_capacity_order)
     iphone_data["summary"]["total_articles"] = iphone_total_articles
 
     # Analyze iPad mini
-    ipad_series_order = ["iPad mini 7", "iPad mini 6"]
-    ipad_capacity_order = ["64G", "128G", "256G", "512G"]
+    ipad_series_order = ["iPad mini 7", "iPad mini 6", "iPad mini 5", "iPad mini 4"]
+    ipad_capacity_order = ["16G", "32G", "64G", "128G", "256G", "512G", "未標示"]
     ipad_data = analyze_category_data(ipad_items, ipad_series_order, ipad_capacity_order)
     ipad_data["summary"]["total_articles"] = ipad_total_articles
+
+    ipad_pro_data = analyze_category_data(ipad_pro_items, ["iPad Pro"], ["64G", "128G", "256G", "512G", "1TB", "2TB", "未標示"])
+    ipad_pro_data["summary"]["total_articles"] = ipad_pro_total_articles
 
     # Table items
     table_items = []
@@ -257,13 +315,17 @@ def analyze(force_reparse=False):
             "date": it['date_str'],
             "title": it['title'],
             "url": it['url'],
-            "raw_price": it['raw_price_str']
+            "raw_price": it['raw_price_str'],
+            "quality_score": it.get('quality_score'),
+            "quality_flags": json.loads(it['quality_flags']) if it.get('quality_flags') else [],
+            "market_eligible": it.get('market_eligible', True)
         })
 
     output_data = {
         "categories": {
             "iphone": iphone_data,
-            "ipad_mini": ipad_data
+            "ipad_mini": ipad_data,
+            "ipad_pro": ipad_pro_data
         },
         # Top-level fallback for iphone
         "summary": iphone_data["summary"],
@@ -277,14 +339,17 @@ def analyze(force_reparse=False):
         json.dump(output_data, f, ensure_ascii=False, indent=2)
 
     js_content = f"window.IPHONE_DATA = {json.dumps(output_data, ensure_ascii=False)};"
-    js_path1 = os.path.join(os.path.dirname(__file__), "data", "iphone_data.js")
-    js_path2 = os.path.join(os.path.dirname(__file__), "web", "iphone_data.js")
-    with open(js_path1, "w", encoding="utf-8") as f:
-        f.write(js_content)
-    with open(js_path2, "w", encoding="utf-8") as f:
-        f.write(js_content)
+    for js_path in [
+        os.path.join(os.path.dirname(__file__), "data", "iphone_data.js"),
+        os.path.join(os.path.dirname(__file__), "web", "iphone_data.js"),
+    ]:
+        try:
+            with open(js_path, "w", encoding="utf-8") as f:
+                f.write(js_content)
+        except Exception:
+            pass
 
-    print(f"[OK] Analysis complete! Data exported to: {JSON_PATH} and web/iphone_data.js")
+    print(f"[OK] Analysis complete! Data exported to: {JSON_PATH}")
     return output_data
 
 if __name__ == "__main__":
