@@ -11,7 +11,7 @@
         "sold_ratio": 41.2,
         "earliest_date": "2024-11-04",
         "latest_date": "2026-11-26",
-        "updated_at": "2026-11-26 23:39:03",
+        "updated_at": "2026-11-26 23:49:35",
         "total_articles": 12690
       },
       "grouped_stats": [
@@ -3949,15 +3949,15 @@
     "ipad_mini": {
       "summary": {
         "total_items": 1153,
-        "items_with_price": 989,
+        "items_with_price": 990,
         "sold_count": 571,
-        "reserved_count": 26,
+        "reserved_count": 27,
         "pending_count": 8,
         "active_count": 384,
         "sold_ratio": 57.7,
         "earliest_date": "2024-11-05",
         "latest_date": "2026-11-26",
-        "updated_at": "2026-11-26 23:39:03",
+        "updated_at": "2026-11-26 23:49:35",
         "total_articles": 1144
       },
       "grouped_stats": [
@@ -4529,9 +4529,9 @@
           "series": "iPad mini 6",
           "model": "iPad mini 6 (WiFi)",
           "capacity": "64G",
-          "total_count": 244,
+          "total_count": 245,
           "sold_count": 143,
-          "sold_ratio": 58.6,
+          "sold_ratio": 58.4,
           "sold_stats": {
             "count": 143,
             "min": 5500,
@@ -4555,12 +4555,12 @@
             "p75": 9425
           },
           "total_stats": {
-            "count": 244,
+            "count": 245,
             "min": 5500,
             "max": 11500,
-            "avg": 8259,
+            "avg": 8260,
             "median": 8000,
-            "mode": 8200,
+            "mode": 8500,
             "lowest10_avg": 5920,
             "p25": 7500,
             "p75": 9000
@@ -5216,7 +5216,7 @@
         "sold_ratio": 49.9,
         "earliest_date": "2024-11-04",
         "latest_date": "2026-11-26",
-        "updated_at": "2026-11-26 23:39:03",
+        "updated_at": "2026-11-26 23:49:35",
         "total_articles": 1383
       },
       "grouped_stats": [
@@ -8311,7 +8311,7 @@
     "sold_ratio": 41.2,
     "earliest_date": "2024-11-04",
     "latest_date": "2026-11-26",
-    "updated_at": "2026-11-26 23:39:03",
+    "updated_at": "2026-11-26 23:49:35",
     "total_articles": 12690
   },
   "grouped_stats": [
@@ -269779,10 +269779,10 @@
     {
       "id": "M.1742371845.A.AB5",
       "device_type": "ipad_mini",
-      "series": "iPad mini 8",
-      "model": "iPad mini 8 (WiFi)",
-      "capacity": "未標示",
-      "price": null,
+      "series": "iPad mini 6",
+      "model": "iPad mini 6 (WiFi)",
+      "capacity": "64G",
+      "price": 8500,
       "status": "暫售",
       "location": "全國",
       "battery": null,
@@ -269791,12 +269791,9 @@
       "title": "[販售] 全國 iPad mini 6 wifi 粉 64G 暫售",
       "url": "https://www.ptt.cc/bbs/MacShop/M.1742371845.A.AB5.html",
       "raw_price": "8500",
-      "quality_score": 65,
-      "quality_flags": [
-        "容量規格不符",
-        "價格未辨識"
-      ],
-      "market_eligible": false
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
     },
     {
       "id": "M.1742363789.A.A65",

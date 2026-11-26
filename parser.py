@@ -545,15 +545,20 @@ def parse_single_phone(item_model_str, item_spec_str, item_price_str, title, bod
     elif 'ipad mini' in normalized_text_to_check or 'ipadmini' in normalized_text_to_check:
         device_type = 'ipad_mini'
         found_series = None
-        if re.search(r'(?i)(?:mini\s*8(?!\d)|mini\s*第?\s*8\s*代|mini\s*\(?\s*a18|\ba18\s*pro\b)', normalized_text_to_check):
+
+        # Clean screen sizes like 8.3吋 / 8.3" / 7.9吋 to prevent "8.3" from falsely matching "mini 8"
+        text_for_mini_series = re.sub(r'8\.[3-9]\s*(?:吋|inch|英吋|\"|代)?', ' ', normalized_text_to_check)
+        text_for_mini_series = re.sub(r'7\.9\s*(?:吋|inch|英吋|\")?', ' ', text_for_mini_series)
+
+        if re.search(r'(?i)(?:mini\s*8(?![.\d]|吋|inch|英吋|\")|mini\s*第?\s*8\s*代|mini\s*\(?\s*a18|\ba18\s*pro\b)', text_for_mini_series):
             found_series = 'iPad mini 8'
-        elif re.search(r'(?i)(?:mini\s*7(?!\d)|mini\s*第?\s*7\s*代|mini\s*\(?\s*a17|\ba17\s*pro\b)', normalized_text_to_check):
+        elif re.search(r'(?i)(?:mini\s*7(?!\d)|mini\s*第?\s*7\s*代|mini\s*\(?\s*a17|\ba17\s*pro\b)', text_for_mini_series):
             found_series = 'iPad mini 7'
-        elif re.search(r'(?i)(?:mini\s*6(?!\d)|mini\s*第?\s*6\s*代)', normalized_text_to_check):
+        elif re.search(r'(?i)(?:mini\s*6(?!\d)|mini\s*第?\s*6\s*代)', text_for_mini_series):
             found_series = 'iPad mini 6'
-        elif re.search(r'(?i)(?:mini\s*5(?!\d)|mini\s*第?\s*5\s*代|mini\s*五代)', normalized_text_to_check):
+        elif re.search(r'(?i)(?:mini\s*5(?!\d)|mini\s*第?\s*5\s*代|mini\s*五代)', text_for_mini_series):
             found_series = 'iPad mini 5'
-        elif re.search(r'(?i)(?:mini\s*4(?!\d)|mini\s*第?\s*4\s*代|mini\s*四代)', normalized_text_to_check):
+        elif re.search(r'(?i)(?:mini\s*4(?!\d)|mini\s*第?\s*4\s*代|mini\s*四代)', text_for_mini_series):
             found_series = 'iPad mini 4'
         else:
             return None
