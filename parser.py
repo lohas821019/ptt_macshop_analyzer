@@ -64,6 +64,9 @@ VALID_MODEL_CAPACITIES = {
     "iPhone 18": ["128G", "256G", "512G"],
     "iPhone 18 Pro": ["256G", "512G", "1TB", "2TB"],      # No 128G
     "iPhone 18 Pro Max": ["256G", "512G", "1TB", "2TB"],  # No 128G
+    # iPad mini 8 (128G, 256G, 512G, 1TB)
+    "iPad mini 8 (WiFi)": ["128G", "256G", "512G", "1TB"],
+    "iPad mini 8 (Cellular)": ["128G", "256G", "512G", "1TB"],
     # iPad mini 6 (Only 64G and 256G)
     "iPad mini 6 (WiFi)": ["64G", "256G"],
     "iPad mini 6 (Cellular)": ["64G", "256G"],
@@ -303,6 +306,7 @@ MIN_SERIES_PRICE = {
     "iPhone 15": 8000,
     "iPhone 14": 5500,
     "iPhone 13": 3500,
+    "iPad mini 8": 10000,
     "iPad mini 7": 8000,
     "iPad mini 6": 4500,
     "iPad mini 5": 2500,
@@ -541,7 +545,9 @@ def parse_single_phone(item_model_str, item_spec_str, item_price_str, title, bod
     elif 'ipad mini' in normalized_text_to_check or 'ipadmini' in normalized_text_to_check:
         device_type = 'ipad_mini'
         found_series = None
-        if re.search(r'(?i)(?:mini\s*7(?!\d)|mini\s*第?\s*7\s*代|mini\s*\(?\s*a17|\ba17\s*pro\b)', normalized_text_to_check):
+        if re.search(r'(?i)(?:mini\s*8(?!\d)|mini\s*第?\s*8\s*代|mini\s*\(?\s*a18|\ba18\s*pro\b)', normalized_text_to_check):
+            found_series = 'iPad mini 8'
+        elif re.search(r'(?i)(?:mini\s*7(?!\d)|mini\s*第?\s*7\s*代|mini\s*\(?\s*a17|\ba17\s*pro\b)', normalized_text_to_check):
             found_series = 'iPad mini 7'
         elif re.search(r'(?i)(?:mini\s*6(?!\d)|mini\s*第?\s*6\s*代)', normalized_text_to_check):
             found_series = 'iPad mini 6'

@@ -18,6 +18,7 @@ SERIES_QUERIES = [
     "iPhone 15",
     "iPhone 14",
     "iPhone 13",
+    "iPad mini 8",
     "iPad mini",
     "iPad mini 7",
     "iPad mini 6",
@@ -230,7 +231,7 @@ def crawl_ipad_pro(years=2, days=None, max_pages=None, max_workers=5, full_scan=
 def crawl_ipad_mini(years=2, days=None, max_pages=None, max_workers=5, full_scan=False):
     """Crawl iPad mini sales posts only."""
     total = 0
-    for q in ["iPad mini", "iPad mini 7", "iPad mini 6", "ipadmini"]:
+    for q in ["iPad mini 8", "iPad mini", "iPad mini 7", "iPad mini 6", "ipadmini"]:
         total += crawl_series(q, years=years, days=days, max_pages=max_pages,
                               max_workers=max_workers, full_scan=full_scan)
     return total

@@ -30,12 +30,12 @@ let gapChart = null;
 
 const SERIES_ORDER_CONFIG = {
   iphone: ["iPhone 18", "iPhone 17", "iPhone 16", "iPhone 15", "iPhone 14", "iPhone 13"],
-  ipad_mini: ["iPad mini 7", "iPad mini 6"],
+  ipad_mini: ["iPad mini 8", "iPad mini 7", "iPad mini 6"],
   ipad_pro: ["iPad Pro"]
 };
 const CAPACITY_ORDER_CONFIG = {
   iphone: ["128G", "256G", "512G", "1TB", "2TB", "64G", "未標示"],
-  ipad_mini: ["64G", "128G", "256G", "512G", "未標示"],
+  ipad_mini: ["64G", "128G", "256G", "512G", "1TB", "未標示"],
   ipad_pro: ["64G", "128G", "256G", "512G", "1TB", "2TB", "未標示"]
 };
 
@@ -666,6 +666,7 @@ function renderCategoryControls() {
     // iPad mini
     badgesContainer.innerHTML = `
       <button onclick="setSeriesFilter('ALL')" class="badge-btn px-3 py-1 text-xs rounded-lg font-medium bg-sky-600 text-white transition" data-val="ALL">全部</button>
+      <button onclick="setSeriesFilter('iPad mini 8')" class="badge-btn px-3 py-1 text-xs rounded-lg font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-val="iPad mini 8">iPad mini 8</button>
       <button onclick="setSeriesFilter('iPad mini 7')" class="badge-btn px-3 py-1 text-xs rounded-lg font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-val="iPad mini 7">iPad mini 7</button>
       <button onclick="setSeriesFilter('iPad mini 6')" class="badge-btn px-3 py-1 text-xs rounded-lg font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-val="iPad mini 6">iPad mini 6</button>
     `;
@@ -682,11 +683,13 @@ function renderCategoryControls() {
       <option value="128G">128G</option>
       <option value="256G">256G</option>
       <option value="512G">512G</option>
+      <option value="1TB">1TB</option>
       <option value="未標示">未標示</option>
     `;
 
     chartFilter.innerHTML = `
       <option value="ALL">全部版本</option>
+      <option value="iPad mini 8">iPad mini 8</option>
       <option value="iPad mini 7">iPad mini 7</option>
       <option value="iPad mini 6">iPad mini 6</option>
     `;
@@ -1279,7 +1282,7 @@ function renderPriceRangeChart(stats) {
 
   const SERIES_ORDER = [
     'iPhone 13', 'iPhone 14', 'iPhone 15', 'iPhone 16', 'iPhone 17', 'iPhone 18',
-    'iPad mini 6', 'iPad mini 7', 'iPad Pro'
+    'iPad mini 6', 'iPad mini 7', 'iPad mini 8', 'iPad Pro'
   ];
   const CAPACITY_ORDER = ['64G', '128G', '256G', '512G', '1TB', '2TB'];
 
@@ -1632,6 +1635,7 @@ function renderTrendChart(trends) {
     'iPhone 15': '#818cf8',
     'iPhone 14': '#a78bfa',
     'iPhone 13': '#4ade80',
+    'iPad mini 8': '#f43f5e',
     'iPad mini 7': '#38bdf8',
     'iPad mini 6': '#fb923c'
   };
@@ -1721,7 +1725,7 @@ function renderGenerationGapChart() {
   const isIphone = activeCategory === 'iphone';
   const seriesList = isIphone
     ? ['iPhone 13', 'iPhone 14', 'iPhone 15', 'iPhone 16', 'iPhone 17', 'iPhone 18']
-    : activeCategory === 'ipad_mini' ? ['iPad mini 6', 'iPad mini 7'] : ['iPad Pro'];
+    : activeCategory === 'ipad_mini' ? ['iPad mini 6', 'iPad mini 7', 'iPad mini 8'] : ['iPad Pro'];
 
   const shortLabels = {
     'iPhone 13': 'i13',
@@ -1731,7 +1735,8 @@ function renderGenerationGapChart() {
     'iPhone 17': 'i17',
     'iPhone 18': 'i18',
     'iPad mini 6': 'mini 6',
-    'iPad mini 7': 'mini 7'
+    'iPad mini 7': 'mini 7',
+    'iPad mini 8': 'mini 8'
   };
 
   const seriesColors = {
@@ -1742,7 +1747,8 @@ function renderGenerationGapChart() {
     'iPhone 17': '#fb923c',
     'iPhone 18': '#f43f5e',
     'iPad mini 6': '#fb923c',
-    'iPad mini 7': '#38bdf8'
+    'iPad mini 7': '#38bdf8',
+    'iPad mini 8': '#f43f5e'
   };
 
   const specFilter = document.getElementById('gap-spec-filter')?.value || (isIphone ? 'BASE_128G' : 'WIFI_BASE');
@@ -2574,15 +2580,18 @@ function renderMiniCompareView() {
   );
 
   // Update counts on generation overview cards
+  const mini8Items = miniCompareItems.filter(it => it.series === 'iPad mini 8');
   const mini7Items = miniCompareItems.filter(it => it.series === 'iPad mini 7');
   const mini6Items = miniCompareItems.filter(it => it.series === 'iPad mini 6');
   const mini5Items = miniCompareItems.filter(it => it.series === 'iPad mini 5');
   const mini4Items = miniCompareItems.filter(it => it.series === 'iPad mini 4');
 
+  const el8 = document.getElementById('mini8-sold-count');
   const el7 = document.getElementById('mini7-sold-count');
   const el6 = document.getElementById('mini6-sold-count');
   const el5 = document.getElementById('mini5-sold-count');
   const el4 = document.getElementById('mini4-sold-count');
+  if (el8) el8.textContent = `成交 ${mini8Items.length} 筆`;
   if (el7) el7.textContent = `成交 ${mini7Items.length} 筆`;
   if (el6) el6.textContent = `成交 ${mini6Items.length} 筆`;
   if (el5) el5.textContent = `成交 ${mini5Items.length} 筆`;
@@ -2638,6 +2647,12 @@ function renderMiniCompareSummaryTable() {
 
   // Define display rows order and generation difference mappings
   const displaySpecs = [
+    // mini 8
+    { series: 'iPad mini 8', conn: 'WiFi', cap: '128G', compareKey: 'iPad mini 7|WiFi|128G', diffLabel: 'vs mini 7 (128G)' },
+    { series: 'iPad mini 8', conn: 'WiFi', cap: '256G', compareKey: 'iPad mini 7|WiFi|256G', diffLabel: 'vs mini 7 (256G)' },
+    { series: 'iPad mini 8', conn: 'WiFi', cap: '512G', compareKey: 'iPad mini 7|WiFi|512G', diffLabel: 'vs mini 7 (512G)' },
+    { series: 'iPad mini 8', conn: 'Cellular', cap: '128G', compareKey: 'iPad mini 7|Cellular|128G', diffLabel: 'vs mini 7 LTE' },
+    { series: 'iPad mini 8', conn: 'Cellular', cap: '256G', compareKey: 'iPad mini 7|Cellular|256G', diffLabel: 'vs mini 7 256G LTE' },
     // mini 7
     { series: 'iPad mini 7', conn: 'WiFi', cap: '128G', compareKey: 'iPad mini 6|WiFi|64G', diffLabel: 'vs mini 6 (64G)' },
     { series: 'iPad mini 7', conn: 'WiFi', cap: '256G', compareKey: 'iPad mini 6|WiFi|256G', diffLabel: 'vs mini 6 (256G)' },
@@ -2668,7 +2683,8 @@ function renderMiniCompareSummaryTable() {
 
     // Series badge color
     let sBadgeClass = 'bg-slate-800 text-slate-300 border-slate-700';
-    if (spec.series === 'iPad mini 7') sBadgeClass = 'bg-amber-500/20 text-amber-300 border-amber-500/30';
+    if (spec.series === 'iPad mini 8') sBadgeClass = 'bg-rose-500/20 text-rose-300 border-rose-500/30';
+    else if (spec.series === 'iPad mini 7') sBadgeClass = 'bg-amber-500/20 text-amber-300 border-amber-500/30';
     else if (spec.series === 'iPad mini 6') sBadgeClass = 'bg-sky-500/20 text-sky-300 border-sky-500/30';
     else if (spec.series === 'iPad mini 5') sBadgeClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
     else if (spec.series === 'iPad mini 4') sBadgeClass = 'bg-purple-500/20 text-purple-300 border-purple-500/30';
@@ -2852,7 +2868,8 @@ function renderMiniTransactionsTable() {
       : '<span class="px-1.5 py-0.5 text-[10px] rounded bg-slate-800 text-slate-400 border border-slate-700">WiFi</span>';
 
     let sBadgeClass = 'bg-slate-800 text-slate-300 border-slate-700';
-    if (it.series === 'iPad mini 7') sBadgeClass = 'bg-amber-500/20 text-amber-300 border-amber-500/30';
+    if (it.series === 'iPad mini 8') sBadgeClass = 'bg-rose-500/20 text-rose-300 border-rose-500/30';
+    else if (it.series === 'iPad mini 7') sBadgeClass = 'bg-amber-500/20 text-amber-300 border-amber-500/30';
     else if (it.series === 'iPad mini 6') sBadgeClass = 'bg-sky-500/20 text-sky-300 border-sky-500/30';
     else if (it.series === 'iPad mini 5') sBadgeClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
     else if (it.series === 'iPad mini 4') sBadgeClass = 'bg-purple-500/20 text-purple-300 border-purple-500/30';

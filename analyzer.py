@@ -290,8 +290,8 @@ def analyze(force_reparse=False):
     iphone_data["summary"]["total_articles"] = iphone_total_articles
 
     # Analyze iPad mini
-    ipad_series_order = ["iPad mini 7", "iPad mini 6", "iPad mini 5", "iPad mini 4"]
-    ipad_capacity_order = ["16G", "32G", "64G", "128G", "256G", "512G", "未標示"]
+    ipad_series_order = ["iPad mini 8", "iPad mini 7", "iPad mini 6", "iPad mini 5", "iPad mini 4"]
+    ipad_capacity_order = ["16G", "32G", "64G", "128G", "256G", "512G", "1TB", "未標示"]
     ipad_data = analyze_category_data(ipad_items, ipad_series_order, ipad_capacity_order)
     ipad_data["summary"]["total_articles"] = ipad_total_articles
 
