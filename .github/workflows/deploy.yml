@@ -1,0 +1,46 @@
+name: Deploy Dashboard to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Prepare Site Files
+        run: |
+          mkdir -p public/data
+          # 複製 web 儀表板資源至發布目錄
+          cp -r web/* public/
+          # 複製分析數據至 public/data 及 public 根目錄以確保相對路徑正常
+          cp data/iphone_data.json public/data/
+          cp data/iphone_data.json public/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './public'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

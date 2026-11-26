@@ -49,11 +49,15 @@
           <p class="text-xs text-slate-400">近 2 年二手市場掛售與成交行情分析 (iPhone 13 ~ 18)</p>
         </div>
       </div>
-      <div class="flex items-center space-x-3">
+      <div class="flex items-center space-x-2 sm:space-x-3">
         <span id="update-badge" class="hidden sm:inline-flex items-center text-xs px-2.5 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
           <i data-lucide="clock" class="w-3.5 h-3.5 mr-1 text-sky-400"></i>
           <span id="updated-at">載入中...</span>
         </span>
+        <button id="btn-update-recent" onclick="updateRecentData(3)" title="抓取 PTT MacShop 板近 3 天最新貼文並自動重新統計" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 hover:text-emerald-200 transition shadow-sm active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+          <i id="btn-update-recent-icon" data-lucide="refresh-cw" class="w-3.5 h-3.5 mr-1.5 text-emerald-400"></i>
+          <span id="btn-update-recent-text">更新近 3 天資料</span>
+        </button>
         <button onclick="exportCSV()" class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 transition">
           <i data-lucide="download" class="w-3.5 h-3.5 mr-1.5 text-sky-400"></i> 匯出 CSV
         </button>
@@ -103,6 +107,7 @@
           <button type="button" onclick="setDatePreset('6m')" class="date-preset-btn cursor-pointer px-2.5 py-1 text-xs rounded-lg font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition active:scale-95" data-preset="6m">近半年</button>
           <button type="button" onclick="setDatePreset('90d')" class="date-preset-btn cursor-pointer px-2.5 py-1 text-xs rounded-lg font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition active:scale-95" data-preset="90d">近 90 天</button>
           <button type="button" onclick="setDatePreset('30d')" class="date-preset-btn cursor-pointer px-2.5 py-1 text-xs rounded-lg font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition active:scale-95" data-preset="30d">近 30 天</button>
+          <button type="button" onclick="setDatePreset('3d')" class="date-preset-btn cursor-pointer px-2.5 py-1 text-xs rounded-lg font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition active:scale-95" data-preset="3d">近 3 天</button>
         </div>
       </div>
       <div class="flex items-center gap-2">

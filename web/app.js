@@ -61,7 +61,9 @@ function calculatePresetDates(preset) {
   }
   const maxD = new Date(globalMaxDate + 'T00:00:00');
   let startD = new Date(maxD);
-  if (preset === '30d') {
+  if (preset === '3d') {
+    startD.setDate(startD.getDate() - 3);
+  } else if (preset === '30d') {
     startD.setDate(startD.getDate() - 30);
   } else if (preset === '90d') {
     startD.setDate(startD.getDate() - 90);
@@ -378,8 +380,11 @@ function computeDynamicCategoryData(category, startDate, endDate) {
 }
 
 // Load Data
-async function loadData() {
-  if (window.IPHONE_DATA) {
+async function loadData(forceFetch = false) {
+  if (forceFetch) {
+    window.IPHONE_DATA = null;
+  }
+  if (!forceFetch && window.IPHONE_DATA) {
     rawData = window.IPHONE_DATA;
     initDataRange();
     setupDashboard();
@@ -408,6 +413,55 @@ async function loadData() {
         </div>
       `;
     }
+  }
+}
+
+// Trigger recent articles update via API
+let isUpdatingRecent = false;
+async function updateRecentData(days = 3) {
+  if (isUpdatingRecent) return;
+
+  const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  if (!isLocal) {
+    alert(
+      '【GitHub Pages 雲端展示模式】\n\n' +
+      '線上版本由 GitHub Actions 排程定時自動爬取更新。\n\n' +
+      '若要手動點擊按鈕即時爬取 PTT 最新貼文，請在本地電腦啟動本系統（執行「啟動看板.bat」或 python run.py）。'
+    );
+    return;
+  }
+
+  const btn = document.getElementById('btn-update-recent');
+  const icon = document.getElementById('btn-update-recent-icon');
+  const text = document.getElementById('btn-update-recent-text');
+
+  isUpdatingRecent = true;
+  if (btn) btn.disabled = true;
+  if (text) text.innerText = `正在抓取近 ${days} 天最新貼文...`;
+  if (icon) icon.classList.add('animate-spin');
+
+  try {
+    const res = await fetch(`/api/update?days=${days}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    const result = await res.json();
+    if (result.success) {
+      alert(`✅ ${result.message}\n資料已重新統計並同步至儀表板！`);
+      await loadData(true);
+      setDatePreset('3d');
+    } else {
+      alert(`⚠️ 更新未完成：${result.message || '未知錯誤'}`);
+    }
+  } catch (err) {
+    console.error('Update request error:', err);
+    alert('❌ 無法連線至本地更新服務，請確認 run.py 是否正在運行。');
+  } finally {
+    isUpdatingRecent = false;
+    if (btn) btn.disabled = false;
+    if (text) text.innerText = '更新近 3 天資料';
+    if (icon) icon.classList.remove('animate-spin');
+    initIcons();
   }
 }
 

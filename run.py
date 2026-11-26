@@ -6,6 +6,8 @@ import http.server
 import socketserver
 import threading
 import time
+import urllib.parse
+import json
 
 # Ensure UTF-8 console output
 if sys.platform == "win32":
@@ -13,6 +15,9 @@ if sys.platform == "win32":
 
 import crawler
 import analyzer
+
+_update_lock = threading.Lock()
+_is_updating = False
 
 class QuietHTTPHandler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
@@ -24,6 +29,69 @@ class QuietHTTPHandler(http.server.SimpleHTTPRequestHandler):
     def log_message(self, format, *args):
         # Suppress routine GET request logs
         pass
+
+    def do_POST(self):
+        parsed = urllib.parse.urlparse(self.path)
+        if parsed.path in ('/api/update', '/api/crawl-recent'):
+            self.handle_api_update(parsed)
+        else:
+            self.send_error(404, "Not Found")
+
+    def do_GET(self):
+        parsed = urllib.parse.urlparse(self.path)
+        if parsed.path in ('/api/update', '/api/crawl-recent'):
+            self.handle_api_update(parsed)
+        else:
+            super().do_GET()
+
+    def handle_api_update(self, parsed):
+        global _is_updating
+        params = urllib.parse.parse_qs(parsed.query)
+        try:
+            days = float(params.get('days', ['3'])[0])
+        except (ValueError, IndexError):
+            days = 3.0
+
+        if not _update_lock.acquire(blocking=False):
+            self.send_response(409)
+            self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.end_headers()
+            self.wfile.write(json.dumps({
+                "success": False,
+                "message": "系統正在爬取更新中，請稍候..."
+            }, ensure_ascii=False).encode('utf-8'))
+            return
+
+        _is_updating = True
+        try:
+            print(f"\n============================================================")
+            print(f"[*] [API] 收到網頁端更新請求：抓取近 {days:g} 天資料...")
+            print(f"============================================================")
+            crawler.crawl_all(days=days, max_workers=5, full_scan=False)
+            crawler.refresh_stale_statuses(max_age_days=max(int(days), 1), max_workers=5)
+            analyzer.analyze(force_reparse=False)
+            print(f"[OK] [API] 近 {days:g} 天資料更新與分析完成！\n")
+
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.end_headers()
+            self.wfile.write(json.dumps({
+                "success": True,
+                "message": f"成功更新近 {days:g} 天最新貼文與成交資料！",
+                "updated_at": time.strftime("%Y-%m-%d %H:%M:%S")
+            }, ensure_ascii=False).encode('utf-8'))
+        except Exception as e:
+            print(f"[!] [API] 更新過程發生異常: {e}")
+            self.send_response(500)
+            self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.end_headers()
+            self.wfile.write(json.dumps({
+                "success": False,
+                "message": f"更新失敗: {str(e)}"
+            }, ensure_ascii=False).encode('utf-8'))
+        finally:
+            _is_updating = False
+            _update_lock.release()
 
 def start_server(port=8000):
     project_dir = os.path.dirname(os.path.abspath(__file__))
@@ -44,6 +112,7 @@ def start_server(port=8000):
 def main():
     parser = argparse.ArgumentParser(description="PTT MacShop iPhone 13~18 Series Analyzer & Dashboard")
     parser.add_argument("--years", type=float, default=2.0, help="Years of history to crawl (default: 2.0)")
+    parser.add_argument("--days", type=float, default=None, help="Days of history to crawl (overrides --years if set)")
     parser.add_argument("--max-pages", type=int, default=None, help="Max search pages per series (default: unlimited until cutoff)")
     parser.add_argument("--workers", type=int, default=6, help="Concurrent crawl workers (default: 6)")
     parser.add_argument("--full", action="store_true", help="Force full 2-year history crawl instead of incremental update")
@@ -63,20 +132,21 @@ def main():
 
     if not args.serve_only and not args.skip_crawl:
         mode_str = "Full History Scan" if args.full else "Incremental Scan"
+        time_str = f"Past {args.days:g} days" if args.days else f"Past {args.years} years"
         if args.ipad_pro_only:
             mode_str = "iPad Pro Only - " + mode_str
         elif args.ipad_mini_only:
             mode_str = "iPad mini Only - " + mode_str
         print(f"============================================================")
         print(f"[*] PTT MacShop Device Analyzer - {mode_str}")
-        print(f"[*] Time Range: Past {args.years} years | Threads: {args.workers}")
+        print(f"[*] Time Range: {time_str} | Threads: {args.workers}")
         print(f"============================================================")
         if args.ipad_pro_only:
-            crawler.crawl_ipad_pro(years=args.years, max_pages=args.max_pages, max_workers=args.workers, full_scan=args.full)
+            crawler.crawl_ipad_pro(years=args.years, days=args.days, max_pages=args.max_pages, max_workers=args.workers, full_scan=args.full)
         elif args.ipad_mini_only:
-            crawler.crawl_ipad_mini(years=args.years, max_pages=args.max_pages, max_workers=args.workers, full_scan=args.full)
+            crawler.crawl_ipad_mini(years=args.years, days=args.days, max_pages=args.max_pages, max_workers=args.workers, full_scan=args.full)
         else:
-            crawler.crawl_all(years=args.years, max_pages=args.max_pages, max_workers=args.workers, full_scan=args.full)
+            crawler.crawl_all(years=args.years, days=args.days, max_pages=args.max_pages, max_workers=args.workers, full_scan=args.full)
 
     if not args.serve_only and not args.skip_crawl and not args.skip_refresh:
         print(f"\n[*] Refreshing status for recent non-sold articles (past {args.refresh_days} days)...")

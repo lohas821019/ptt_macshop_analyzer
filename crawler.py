@@ -85,15 +85,18 @@ def fetch_article_html(session, url):
             time.sleep(1)
     return None
 
-def crawl_series(query, years=2, max_pages=None, max_workers=5, full_scan=False):
+def crawl_series(query, years=2, days=None, max_pages=None, max_workers=5, full_scan=False):
     """
-    Crawls articles for a given series query going back up to `years` years.
+    Crawls articles for a given series query going back up to `days` days or `years` years.
     If full_scan is False (default), stops early when encountering already-cached articles.
     """
     database.init_db()
     existing_ids = database.get_existing_article_ids()
-    cutoff_ts = int(time.time() - years * 365.25 * 86400)
-    cutoff_date = datetime.datetime.fromtimestamp(cutoff_ts).strftime("%Y-%m-%d")
+    if days is not None:
+        cutoff_ts = int(time.time() - days * 86400)
+    else:
+        cutoff_ts = int(time.time() - years * 365.25 * 86400)
+    cutoff_date = datetime.datetime.fromtimestamp(cutoff_ts).strftime("%Y-%m-%d %H:%M")
     mode_str = "Full History Scan" if full_scan else "Incremental Scan (Early Stopping)"
     
     print(f"\n==========================================")
@@ -207,28 +210,28 @@ def crawl_series(query, years=2, max_pages=None, max_workers=5, full_scan=False)
     print(f"[OK] [{query}] Finished fetching.")
     return total_found
 
-def crawl_all(years=2, max_pages=None, max_workers=5, full_scan=False):
+def crawl_all(years=2, days=None, max_pages=None, max_workers=5, full_scan=False):
     start_time = time.time()
     database.init_db()
     total = 0
     for query in SERIES_QUERIES:
-        count = crawl_series(query, years=years, max_pages=max_pages, max_workers=max_workers, full_scan=full_scan)
+        count = crawl_series(query, years=years, days=days, max_pages=max_pages, max_workers=max_workers, full_scan=full_scan)
         total += count
     elapsed = time.time() - start_time
     print(f"\n==========================================")
     print(f"[OK] All series crawl finished in {elapsed:.1f} seconds! Total articles scanned: {total}")
     print(f"==========================================")
 
-def crawl_ipad_pro(years=2, max_pages=None, max_workers=5, full_scan=False):
+def crawl_ipad_pro(years=2, days=None, max_pages=None, max_workers=5, full_scan=False):
     """Crawl iPad Pro sales posts only, using the shared cache and parsing pipeline."""
-    return crawl_series("iPad Pro", years=years, max_pages=max_pages,
+    return crawl_series("iPad Pro", years=years, days=days, max_pages=max_pages,
                         max_workers=max_workers, full_scan=full_scan)
 
-def crawl_ipad_mini(years=2, max_pages=None, max_workers=5, full_scan=False):
+def crawl_ipad_mini(years=2, days=None, max_pages=None, max_workers=5, full_scan=False):
     """Crawl iPad mini sales posts only."""
     total = 0
     for q in ["iPad mini", "iPad mini 7", "iPad mini 6", "ipadmini"]:
-        total += crawl_series(q, years=years, max_pages=max_pages,
+        total += crawl_series(q, years=years, days=days, max_pages=max_pages,
                               max_workers=max_workers, full_scan=full_scan)
     return total
 
