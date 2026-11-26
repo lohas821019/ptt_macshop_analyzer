@@ -2,17 +2,17 @@
   "categories": {
     "iphone": {
       "summary": {
-        "total_items": 13093,
-        "items_with_price": 12134,
-        "sold_count": 4999,
+        "total_items": 13104,
+        "items_with_price": 12141,
+        "sold_count": 5001,
         "reserved_count": 186,
         "pending_count": 50,
-        "active_count": 6899,
+        "active_count": 6904,
         "sold_ratio": 41.2,
         "earliest_date": "2024-11-04",
         "latest_date": "2026-11-26",
-        "updated_at": "2026-11-26 23:33:51",
-        "total_articles": 12681
+        "updated_at": "2026-11-26 23:39:03",
+        "total_articles": 12690
       },
       "grouped_stats": [
         {
@@ -67,9 +67,9 @@
           "series": "iPhone 18",
           "model": "iPhone 18 Pro",
           "capacity": "256G",
-          "total_count": 352,
+          "total_count": 351,
           "sold_count": 88,
-          "sold_ratio": 25.0,
+          "sold_ratio": 25.1,
           "sold_stats": {
             "count": 88,
             "min": 38500,
@@ -82,10 +82,10 @@
             "p75": 43000
           },
           "active_stats": {
-            "count": 262,
+            "count": 261,
             "min": 37500,
             "max": 44900,
-            "avg": 42240,
+            "avg": 42247,
             "median": 42500,
             "mode": 40000,
             "lowest10_avg": 38960,
@@ -93,10 +93,10 @@
             "p75": 43500
           },
           "total_stats": {
-            "count": 352,
+            "count": 351,
             "min": 37500,
             "max": 44900,
-            "avg": 42200,
+            "avg": 42205,
             "median": 42500,
             "mode": 43000,
             "lowest10_avg": 38650,
@@ -323,9 +323,9 @@
           "series": "iPhone 18",
           "model": "iPhone 18 Pro Max",
           "capacity": "512G",
-          "total_count": 161,
+          "total_count": 162,
           "sold_count": 37,
-          "sold_ratio": 23.0,
+          "sold_ratio": 22.8,
           "sold_stats": {
             "count": 37,
             "min": 51500,
@@ -338,21 +338,21 @@
             "p75": 56000
           },
           "active_stats": {
-            "count": 123,
+            "count": 124,
             "min": 50000,
             "max": 56900,
-            "avg": 54383,
+            "avg": 54368,
             "median": 54500,
             "mode": 53000,
             "lowest10_avg": 51820,
             "p25": 53000,
-            "p75": 55750
+            "p75": 55725
           },
           "total_stats": {
-            "count": 161,
+            "count": 162,
             "min": 50000,
             "max": 56900,
-            "avg": 54526,
+            "avg": 54514,
             "median": 54500,
             "mode": 55000,
             "lowest10_avg": 51620,
@@ -365,11 +365,11 @@
             "id": "M.1795316531.A.3E2"
           },
           "latest_active": {
-            "price": 52000,
-            "date": "2026-11-25",
-            "id": "M.1795575690.A.F66"
+            "price": 52500,
+            "date": "2026-11-26",
+            "id": "M.1795625756.A.048"
           },
-          "price_diff": 500
+          "price_diff": 1000
         },
         {
           "series": "iPhone 18",
@@ -531,9 +531,9 @@
           "series": "iPhone 17",
           "model": "iPhone 17",
           "capacity": "512G",
-          "total_count": 67,
+          "total_count": 68,
           "sold_count": 22,
-          "sold_ratio": 32.8,
+          "sold_ratio": 32.4,
           "sold_stats": {
             "count": 22,
             "min": 23500,
@@ -546,24 +546,24 @@
             "p75": 33875
           },
           "active_stats": {
-            "count": 44,
-            "min": 27500,
+            "count": 45,
+            "min": 26000,
             "max": 36000,
-            "avg": 32359,
-            "median": 33050,
+            "avg": 32218,
+            "median": 33000,
             "mode": 34000,
-            "lowest10_avg": 28830,
+            "lowest10_avg": 28430,
             "p25": 31000,
             "p75": 34000
           },
           "total_stats": {
-            "count": 67,
+            "count": 68,
             "min": 23500,
             "max": 36000,
-            "avg": 31693,
+            "avg": 31609,
             "median": 33000,
             "mode": 34000,
-            "lowest10_avg": 26590,
+            "lowest10_avg": 26390,
             "p25": 30000,
             "p75": 34000
           },
@@ -573,19 +573,19 @@
             "id": "M.1793346751.A.A60"
           },
           "latest_active": {
-            "price": 35600,
-            "date": "2026-11-15",
-            "id": "M.1794717541.A.648"
+            "price": 26000,
+            "date": "2026-11-26",
+            "id": "M.1795695711.A.1FC"
           },
-          "price_diff": 10600
+          "price_diff": 1000
         },
         {
           "series": "iPhone 17",
           "model": "iPhone 17 Pro",
           "capacity": "256G",
-          "total_count": 693,
+          "total_count": 697,
           "sold_count": 265,
-          "sold_ratio": 38.2,
+          "sold_ratio": 38.0,
           "sold_stats": {
             "count": 265,
             "min": 27000,
@@ -598,25 +598,25 @@
             "p75": 36000
           },
           "active_stats": {
-            "count": 408,
-            "min": 27000,
+            "count": 412,
+            "min": 26300,
             "max": 37900,
-            "avg": 34388,
+            "avg": 34321,
             "median": 35800,
             "mode": 36000,
-            "lowest10_avg": 27550,
-            "p25": 33000,
+            "lowest10_avg": 27080,
+            "p25": 32874,
             "p75": 36200
           },
           "total_stats": {
-            "count": 693,
-            "min": 27000,
+            "count": 697,
+            "min": 26300,
             "max": 40990,
-            "avg": 34333,
+            "avg": 34294,
             "median": 35800,
             "mode": 36000,
-            "lowest10_avg": 27150,
-            "p25": 32999,
+            "lowest10_avg": 26830,
+            "p25": 32500,
             "p75": 36000
           },
           "latest_sold": {
@@ -625,11 +625,11 @@
             "id": "M.1794937059.A.FA7"
           },
           "latest_active": {
-            "price": 29000,
+            "price": 30500,
             "date": "2026-11-26",
-            "id": "M.1795624135.A.510"
+            "id": "M.1795692237.A.622"
           },
-          "price_diff": 1000
+          "price_diff": 2500
         },
         {
           "series": "iPhone 17",
@@ -757,10 +757,10 @@
             "count": 309,
             "min": 30500,
             "max": 43900,
-            "avg": 38786,
+            "avg": 38784,
             "median": 40100,
             "mode": 41000,
-            "lowest10_avg": 31050,
+            "lowest10_avg": 31000,
             "p25": 37500,
             "p75": 41000
           },
@@ -768,7 +768,7 @@
             "count": 510,
             "min": 29000,
             "max": 43900,
-            "avg": 38478,
+            "avg": 38477,
             "median": 40000,
             "mode": 41000,
             "lowest10_avg": 30300,
@@ -781,19 +781,19 @@
             "id": "M.1795335543.A.178"
           },
           "latest_active": {
-            "price": 31500,
-            "date": "2026-11-25",
-            "id": "M.1795582320.A.A39"
+            "price": 31000,
+            "date": "2026-11-26",
+            "id": "M.1795704467.A.9BC"
           },
-          "price_diff": 1500
+          "price_diff": 1000
         },
         {
           "series": "iPhone 17",
           "model": "iPhone 17 Pro Max",
           "capacity": "512G",
-          "total_count": 135,
+          "total_count": 137,
           "sold_count": 57,
-          "sold_ratio": 42.2,
+          "sold_ratio": 41.6,
           "sold_stats": {
             "count": 57,
             "min": 36000,
@@ -806,24 +806,24 @@
             "p75": 46500
           },
           "active_stats": {
-            "count": 75,
+            "count": 77,
             "min": 34500,
             "max": 51900,
-            "avg": 42851,
-            "median": 44500,
+            "avg": 42679,
+            "median": 43500,
             "mode": 47000,
-            "lowest10_avg": 35980,
-            "p25": 38250,
+            "lowest10_avg": 35780,
+            "p25": 38000,
             "p75": 47000
           },
           "total_stats": {
-            "count": 135,
+            "count": 137,
             "min": 34500,
             "max": 51900,
-            "avg": 42727,
-            "median": 43500,
+            "avg": 42633,
+            "median": 43000,
             "mode": 47000,
-            "lowest10_avg": 35800,
+            "lowest10_avg": 35630,
             "p25": 38500,
             "p75": 46900
           },
@@ -833,11 +833,11 @@
             "id": "M.1794981811.A.514"
           },
           "latest_active": {
-            "price": 44900,
+            "price": 37500,
             "date": "2026-11-26",
-            "id": "M.1795687201.A.4B7"
+            "id": "M.1795699616.A.115"
           },
-          "price_diff": 8100
+          "price_diff": 700
         },
         {
           "series": "iPhone 17",
@@ -1259,9 +1259,9 @@
           "series": "iPhone 16",
           "model": "iPhone 16 Pro",
           "capacity": "128G",
-          "total_count": 353,
+          "total_count": 354,
           "sold_count": 123,
-          "sold_ratio": 34.8,
+          "sold_ratio": 34.7,
           "sold_stats": {
             "count": 123,
             "min": 15000,
@@ -1274,10 +1274,10 @@
             "p75": 31300
           },
           "active_stats": {
-            "count": 226,
+            "count": 227,
             "min": 17500,
             "max": 34000,
-            "avg": 25577,
+            "avg": 25543,
             "median": 24000,
             "mode": 23000,
             "lowest10_avg": 17950,
@@ -1285,10 +1285,10 @@
             "p75": 32000
           },
           "total_stats": {
-            "count": 353,
+            "count": 354,
             "min": 15000,
             "max": 36900,
-            "avg": 25523,
+            "avg": 25502,
             "median": 24000,
             "mode": 20000,
             "lowest10_avg": 17350,
@@ -1303,7 +1303,7 @@
           "latest_active": {
             "price": 18000,
             "date": "2026-11-26",
-            "id": "M.1795669998.A.73F"
+            "id": "M.1795694069.A.FF4"
           },
           "price_diff": -500
         },
@@ -1363,9 +1363,9 @@
           "series": "iPhone 16",
           "model": "iPhone 16 Pro",
           "capacity": "512G",
-          "total_count": 165,
+          "total_count": 160,
           "sold_count": 68,
-          "sold_ratio": 41.2,
+          "sold_ratio": 42.5,
           "sold_stats": {
             "count": 68,
             "min": 22000,
@@ -1378,26 +1378,26 @@
             "p75": 29625
           },
           "active_stats": {
-            "count": 94,
-            "min": 21500,
-            "max": 46500,
-            "avg": 31168,
-            "median": 29000,
+            "count": 89,
+            "min": 19500,
+            "max": 44300,
+            "avg": 29796,
+            "median": 28000,
             "mode": 25000,
-            "lowest10_avg": 22900,
+            "lowest10_avg": 22150,
             "p25": 25000,
-            "p75": 34250
+            "p75": 31000
           },
           "total_stats": {
-            "count": 165,
-            "min": 21500,
-            "max": 46500,
-            "avg": 30220,
-            "median": 29000,
+            "count": 160,
+            "min": 19500,
+            "max": 45000,
+            "avg": 29427,
+            "median": 28250,
             "mode": 25000,
-            "lowest10_avg": 22550,
-            "p25": 26000,
-            "p75": 31000
+            "lowest10_avg": 22000,
+            "p25": 25000,
+            "p75": 30125
           },
           "latest_sold": {
             "price": 23000,
@@ -1405,11 +1405,11 @@
             "id": "M.1791789835.A.4AF"
           },
           "latest_active": {
-            "price": 21500,
-            "date": "2026-11-25",
-            "id": "M.1795595927.A.36B"
+            "price": 19500,
+            "date": "2026-11-26",
+            "id": "M.1795698235.A.1B6"
           },
-          "price_diff": -1500
+          "price_diff": -3500
         },
         {
           "series": "iPhone 16",
@@ -1467,9 +1467,9 @@
           "series": "iPhone 16",
           "model": "iPhone 16 Pro Max",
           "capacity": "256G",
-          "total_count": 846,
+          "total_count": 847,
           "sold_count": 356,
-          "sold_ratio": 42.1,
+          "sold_ratio": 42.0,
           "sold_stats": {
             "count": 356,
             "min": 20000,
@@ -1482,24 +1482,24 @@
             "p75": 38562
           },
           "active_stats": {
-            "count": 483,
+            "count": 484,
             "min": 20000,
             "max": 43500,
-            "avg": 33374,
+            "avg": 33349,
             "median": 31500,
             "mode": 30000,
-            "lowest10_avg": 21650,
+            "lowest10_avg": 21500,
             "p25": 28500,
             "p75": 39500
           },
           "total_stats": {
-            "count": 846,
+            "count": 847,
             "min": 20000,
             "max": 44900,
-            "avg": 32940,
+            "avg": 32926,
             "median": 31000,
             "mode": 30000,
-            "lowest10_avg": 20700,
+            "lowest10_avg": 20650,
             "p25": 28000,
             "p75": 39100
           },
@@ -1509,11 +1509,11 @@
             "id": "M.1795252008.A.F58"
           },
           "latest_active": {
-            "price": 21000,
+            "price": 21500,
             "date": "2026-11-26",
-            "id": "M.1795663922.A.FC3"
+            "id": "M.1795705378.A.F2A"
           },
-          "price_diff": 0
+          "price_diff": 500
         },
         {
           "series": "iPhone 16",
@@ -1987,17 +1987,17 @@
           "series": "iPhone 15",
           "model": "iPhone 15 Pro",
           "capacity": "256G",
-          "total_count": 672,
-          "sold_count": 292,
+          "total_count": 673,
+          "sold_count": 293,
           "sold_ratio": 43.5,
           "sold_stats": {
-            "count": 292,
+            "count": 293,
             "min": 11500,
             "max": 27000,
-            "avg": 18741,
+            "avg": 18725,
             "median": 18000,
             "mode": 17000,
-            "lowest10_avg": 13320,
+            "lowest10_avg": 13300,
             "p25": 16500,
             "p75": 20500
           },
@@ -2013,10 +2013,10 @@
             "p75": 20000
           },
           "total_stats": {
-            "count": 672,
+            "count": 673,
             "min": 11000,
             "max": 27000,
-            "avg": 18565,
+            "avg": 18558,
             "median": 18000,
             "mode": 17000,
             "lowest10_avg": 12200,
@@ -2024,16 +2024,16 @@
             "p75": 20000
           },
           "latest_sold": {
-            "price": 13999,
-            "date": "2026-11-14",
-            "id": "M.1794600096.A.0E8"
+            "price": 14000,
+            "date": "2026-11-26",
+            "id": "M.1795702735.A.043"
           },
           "latest_active": {
             "price": 14500,
             "date": "2026-11-25",
             "id": "M.1795542961.A.45B"
           },
-          "price_diff": 501
+          "price_diff": 500
         },
         {
           "series": "iPhone 15",
@@ -2299,53 +2299,53 @@
           "series": "iPhone 14",
           "model": "iPhone 14",
           "capacity": "128G",
-          "total_count": 162,
-          "sold_count": 68,
-          "sold_ratio": 42.0,
+          "total_count": 163,
+          "sold_count": 69,
+          "sold_ratio": 42.3,
           "sold_stats": {
-            "count": 68,
+            "count": 69,
             "min": 6500,
             "max": 13000,
-            "avg": 9397,
+            "avg": 9362,
             "median": 8500,
             "mode": 8200,
-            "lowest10_avg": 7230,
+            "lowest10_avg": 7180,
             "p25": 8000,
-            "p75": 10625
+            "p75": 10500
           },
           "active_stats": {
             "count": 89,
-            "min": 6500,
+            "min": 6000,
             "max": 14000,
-            "avg": 9310,
+            "avg": 9299,
             "median": 8800,
             "mode": 8000,
-            "lowest10_avg": 6850,
+            "lowest10_avg": 6750,
             "p25": 7900,
             "p75": 11000
           },
           "total_stats": {
-            "count": 162,
-            "min": 6500,
+            "count": 163,
+            "min": 6000,
             "max": 14000,
-            "avg": 9357,
+            "avg": 9337,
             "median": 8500,
             "mode": 8000,
-            "lowest10_avg": 6800,
+            "lowest10_avg": 6700,
             "p25": 8000,
             "p75": 11000
           },
           "latest_sold": {
-            "price": 8500,
-            "date": "2026-10-28",
-            "id": "M.1793189870.A.D5E"
-          },
-          "latest_active": {
             "price": 7000,
             "date": "2026-11-25",
             "id": "M.1795588762.A.CC0"
           },
-          "price_diff": -1500
+          "latest_active": {
+            "price": 6000,
+            "date": "2026-11-26",
+            "id": "M.1795693204.A.148"
+          },
+          "price_diff": -1000
         },
         {
           "series": "iPhone 14",
@@ -2871,9 +2871,9 @@
           "series": "iPhone 14",
           "model": "iPhone 14 Pro Max",
           "capacity": "256G",
-          "total_count": 297,
+          "total_count": 298,
           "sold_count": 133,
-          "sold_ratio": 44.8,
+          "sold_ratio": 44.6,
           "sold_stats": {
             "count": 133,
             "min": 11500,
@@ -2886,24 +2886,24 @@
             "p75": 19000
           },
           "active_stats": {
-            "count": 160,
+            "count": 161,
             "min": 11000,
             "max": 25000,
-            "avg": 16674,
-            "median": 15900,
+            "avg": 16639,
+            "median": 15800,
             "mode": 17500,
-            "lowest10_avg": 12350,
+            "lowest10_avg": 12150,
             "p25": 14500,
             "p75": 19000
           },
           "total_stats": {
-            "count": 297,
+            "count": 298,
             "min": 11000,
             "max": 25000,
-            "avg": 16520,
+            "avg": 16502,
             "median": 15500,
             "mode": 15000,
-            "lowest10_avg": 12050,
+            "lowest10_avg": 11850,
             "p25": 14500,
             "p75": 19000
           },
@@ -2913,11 +2913,11 @@
             "id": "M.1795433251.A.20E"
           },
           "latest_active": {
-            "price": 14000,
-            "date": "2026-11-22",
-            "id": "M.1795354403.A.63A"
+            "price": 11000,
+            "date": "2026-11-26",
+            "id": "M.1795705378.A.F2A"
           },
-          "price_diff": 0
+          "price_diff": -3000
         },
         {
           "series": "iPhone 14",
@@ -3948,26 +3948,174 @@
     },
     "ipad_mini": {
       "summary": {
-        "total_items": 1142,
-        "items_with_price": 980,
-        "sold_count": 569,
-        "reserved_count": 27,
+        "total_items": 1153,
+        "items_with_price": 989,
+        "sold_count": 571,
+        "reserved_count": 26,
         "pending_count": 8,
-        "active_count": 376,
-        "sold_ratio": 58.1,
+        "active_count": 384,
+        "sold_ratio": 57.7,
         "earliest_date": "2024-11-05",
-        "latest_date": "2026-11-24",
-        "updated_at": "2026-11-26 23:33:51",
-        "total_articles": 1133
+        "latest_date": "2026-11-26",
+        "updated_at": "2026-11-26 23:39:03",
+        "total_articles": 1144
       },
       "grouped_stats": [
+        {
+          "series": "iPad mini 8",
+          "model": "iPad mini 8 (Cellular)",
+          "capacity": "256G",
+          "total_count": 1,
+          "sold_count": 0,
+          "sold_ratio": 0.0,
+          "sold_stats": {
+            "count": 0,
+            "min": 0,
+            "max": 0,
+            "avg": 0,
+            "median": 0,
+            "mode": 0,
+            "lowest10_avg": 0,
+            "p25": 0,
+            "p75": 0
+          },
+          "active_stats": {
+            "count": 1,
+            "min": 30000,
+            "max": 30000,
+            "avg": 30000,
+            "median": 30000,
+            "mode": 30000,
+            "lowest10_avg": 30000,
+            "p25": 30000,
+            "p75": 30000
+          },
+          "total_stats": {
+            "count": 1,
+            "min": 30000,
+            "max": 30000,
+            "avg": 30000,
+            "median": 30000,
+            "mode": 30000,
+            "lowest10_avg": 30000,
+            "p25": 30000,
+            "p75": 30000
+          },
+          "latest_sold": null,
+          "latest_active": {
+            "price": 30000,
+            "date": "2026-11-17",
+            "id": "M.1794856051.A.F28"
+          },
+          "price_diff": null
+        },
+        {
+          "series": "iPad mini 8",
+          "model": "iPad mini 8 (WiFi)",
+          "capacity": "128G",
+          "total_count": 6,
+          "sold_count": 2,
+          "sold_ratio": 33.3,
+          "sold_stats": {
+            "count": 2,
+            "min": 20000,
+            "max": 20500,
+            "avg": 20250,
+            "median": 20250,
+            "mode": 20250,
+            "lowest10_avg": 20250,
+            "p25": 20125,
+            "p75": 20375
+          },
+          "active_stats": {
+            "count": 4,
+            "min": 20000,
+            "max": 21000,
+            "avg": 20725,
+            "median": 20950,
+            "mode": 21000,
+            "lowest10_avg": 20725,
+            "p25": 20675,
+            "p75": 21000
+          },
+          "total_stats": {
+            "count": 6,
+            "min": 20000,
+            "max": 21000,
+            "avg": 20567,
+            "median": 20700,
+            "mode": 20500,
+            "lowest10_avg": 20567,
+            "p25": 20125,
+            "p75": 20975
+          },
+          "latest_sold": {
+            "price": 20000,
+            "date": "2026-11-25",
+            "id": "M.1795614645.A.A8D"
+          },
+          "latest_active": {
+            "price": 20900,
+            "date": "2026-11-21",
+            "id": "M.1795251301.A.E76"
+          },
+          "price_diff": 900
+        },
+        {
+          "series": "iPad mini 8",
+          "model": "iPad mini 8 (WiFi)",
+          "capacity": "256G",
+          "total_count": 1,
+          "sold_count": 0,
+          "sold_ratio": 0.0,
+          "sold_stats": {
+            "count": 0,
+            "min": 0,
+            "max": 0,
+            "avg": 0,
+            "median": 0,
+            "mode": 0,
+            "lowest10_avg": 0,
+            "p25": 0,
+            "p75": 0
+          },
+          "active_stats": {
+            "count": 1,
+            "min": 23900,
+            "max": 23900,
+            "avg": 23900,
+            "median": 23900,
+            "mode": 23900,
+            "lowest10_avg": 23900,
+            "p25": 23900,
+            "p75": 23900
+          },
+          "total_stats": {
+            "count": 1,
+            "min": 23900,
+            "max": 23900,
+            "avg": 23900,
+            "median": 23900,
+            "mode": 23900,
+            "lowest10_avg": 23900,
+            "p25": 23900,
+            "p75": 23900
+          },
+          "latest_sold": null,
+          "latest_active": {
+            "price": 23900,
+            "date": "2026-11-21",
+            "id": "M.1795241768.A.B6D"
+          },
+          "price_diff": null
+        },
         {
           "series": "iPad mini 7",
           "model": "iPad mini 7 (Cellular)",
           "capacity": "128G",
-          "total_count": 16,
+          "total_count": 17,
           "sold_count": 8,
-          "sold_ratio": 50.0,
+          "sold_ratio": 47.1,
           "sold_stats": {
             "count": 8,
             "min": 14000,
@@ -3980,26 +4128,26 @@
             "p75": 17625
           },
           "active_stats": {
-            "count": 8,
+            "count": 9,
             "min": 13000,
             "max": 19900,
-            "avg": 16175,
-            "median": 16750,
+            "avg": 16044,
+            "median": 16500,
             "mode": 17000,
-            "lowest10_avg": 16175,
-            "p25": 14375,
-            "p75": 17125
+            "lowest10_avg": 16044,
+            "p25": 14500,
+            "p75": 17000
           },
           "total_stats": {
-            "count": 16,
+            "count": 17,
             "min": 13000,
             "max": 19900,
-            "avg": 16212,
-            "median": 16000,
-            "mode": 17000,
-            "lowest10_avg": 14900,
+            "avg": 16141,
+            "median": 15500,
+            "mode": 16000,
+            "lowest10_avg": 14700,
             "p25": 14500,
-            "p75": 17125
+            "p75": 17000
           },
           "latest_sold": {
             "price": 14500,
@@ -4007,11 +4155,11 @@
             "id": "M.1793288992.A.55A"
           },
           "latest_active": {
-            "price": 16500,
-            "date": "2026-10-23",
-            "id": "M.1792765158.A.5E1"
+            "price": 15000,
+            "date": "2026-11-26",
+            "id": "M.1795692113.A.122"
           },
-          "price_diff": 2000
+          "price_diff": 500
         },
         {
           "series": "iPad mini 7",
@@ -4396,23 +4544,23 @@
             "p75": 8750
           },
           "active_stats": {
-            "count": 95,
+            "count": 96,
             "min": 6000,
             "max": 11500,
-            "avg": 8541,
+            "avg": 8556,
             "median": 8500,
             "mode": 8500,
             "lowest10_avg": 6740,
             "p25": 7800,
-            "p75": 9350
+            "p75": 9425
           },
           "total_stats": {
             "count": 244,
             "min": 5500,
             "max": 11500,
-            "avg": 8252,
+            "avg": 8259,
             "median": 8000,
-            "mode": 8500,
+            "mode": 8200,
             "lowest10_avg": 5920,
             "p25": 7500,
             "p75": 9000
@@ -4423,11 +4571,11 @@
             "id": "M.1794884733.A.AE5"
           },
           "latest_active": {
-            "price": 8000,
-            "date": "2026-11-22",
-            "id": "M.1795330104.A.165"
+            "price": 10000,
+            "date": "2026-11-26",
+            "id": "M.1795700459.A.6C0"
           },
-          "price_diff": 1000
+          "price_diff": 3000
         },
         {
           "series": "iPad mini 6",
@@ -5068,7 +5216,7 @@
         "sold_ratio": 49.9,
         "earliest_date": "2024-11-04",
         "latest_date": "2026-11-26",
-        "updated_at": "2026-11-26 23:33:51",
+        "updated_at": "2026-11-26 23:39:03",
         "total_articles": 1383
       },
       "grouped_stats": [
@@ -8154,17 +8302,17 @@
     }
   },
   "summary": {
-    "total_items": 13093,
-    "items_with_price": 12134,
-    "sold_count": 4999,
+    "total_items": 13104,
+    "items_with_price": 12141,
+    "sold_count": 5001,
     "reserved_count": 186,
     "pending_count": 50,
-    "active_count": 6899,
+    "active_count": 6904,
     "sold_ratio": 41.2,
     "earliest_date": "2024-11-04",
     "latest_date": "2026-11-26",
-    "updated_at": "2026-11-26 23:33:51",
-    "total_articles": 12681
+    "updated_at": "2026-11-26 23:39:03",
+    "total_articles": 12690
   },
   "grouped_stats": [
     {
@@ -8219,9 +8367,9 @@
       "series": "iPhone 18",
       "model": "iPhone 18 Pro",
       "capacity": "256G",
-      "total_count": 352,
+      "total_count": 351,
       "sold_count": 88,
-      "sold_ratio": 25.0,
+      "sold_ratio": 25.1,
       "sold_stats": {
         "count": 88,
         "min": 38500,
@@ -8234,10 +8382,10 @@
         "p75": 43000
       },
       "active_stats": {
-        "count": 262,
+        "count": 261,
         "min": 37500,
         "max": 44900,
-        "avg": 42240,
+        "avg": 42247,
         "median": 42500,
         "mode": 40000,
         "lowest10_avg": 38960,
@@ -8245,10 +8393,10 @@
         "p75": 43500
       },
       "total_stats": {
-        "count": 352,
+        "count": 351,
         "min": 37500,
         "max": 44900,
-        "avg": 42200,
+        "avg": 42205,
         "median": 42500,
         "mode": 43000,
         "lowest10_avg": 38650,
@@ -8475,9 +8623,9 @@
       "series": "iPhone 18",
       "model": "iPhone 18 Pro Max",
       "capacity": "512G",
-      "total_count": 161,
+      "total_count": 162,
       "sold_count": 37,
-      "sold_ratio": 23.0,
+      "sold_ratio": 22.8,
       "sold_stats": {
         "count": 37,
         "min": 51500,
@@ -8490,21 +8638,21 @@
         "p75": 56000
       },
       "active_stats": {
-        "count": 123,
+        "count": 124,
         "min": 50000,
         "max": 56900,
-        "avg": 54383,
+        "avg": 54368,
         "median": 54500,
         "mode": 53000,
         "lowest10_avg": 51820,
         "p25": 53000,
-        "p75": 55750
+        "p75": 55725
       },
       "total_stats": {
-        "count": 161,
+        "count": 162,
         "min": 50000,
         "max": 56900,
-        "avg": 54526,
+        "avg": 54514,
         "median": 54500,
         "mode": 55000,
         "lowest10_avg": 51620,
@@ -8517,11 +8665,11 @@
         "id": "M.1795316531.A.3E2"
       },
       "latest_active": {
-        "price": 52000,
-        "date": "2026-11-25",
-        "id": "M.1795575690.A.F66"
+        "price": 52500,
+        "date": "2026-11-26",
+        "id": "M.1795625756.A.048"
       },
-      "price_diff": 500
+      "price_diff": 1000
     },
     {
       "series": "iPhone 18",
@@ -8683,9 +8831,9 @@
       "series": "iPhone 17",
       "model": "iPhone 17",
       "capacity": "512G",
-      "total_count": 67,
+      "total_count": 68,
       "sold_count": 22,
-      "sold_ratio": 32.8,
+      "sold_ratio": 32.4,
       "sold_stats": {
         "count": 22,
         "min": 23500,
@@ -8698,24 +8846,24 @@
         "p75": 33875
       },
       "active_stats": {
-        "count": 44,
-        "min": 27500,
+        "count": 45,
+        "min": 26000,
         "max": 36000,
-        "avg": 32359,
-        "median": 33050,
+        "avg": 32218,
+        "median": 33000,
         "mode": 34000,
-        "lowest10_avg": 28830,
+        "lowest10_avg": 28430,
         "p25": 31000,
         "p75": 34000
       },
       "total_stats": {
-        "count": 67,
+        "count": 68,
         "min": 23500,
         "max": 36000,
-        "avg": 31693,
+        "avg": 31609,
         "median": 33000,
         "mode": 34000,
-        "lowest10_avg": 26590,
+        "lowest10_avg": 26390,
         "p25": 30000,
         "p75": 34000
       },
@@ -8725,19 +8873,19 @@
         "id": "M.1793346751.A.A60"
       },
       "latest_active": {
-        "price": 35600,
-        "date": "2026-11-15",
-        "id": "M.1794717541.A.648"
+        "price": 26000,
+        "date": "2026-11-26",
+        "id": "M.1795695711.A.1FC"
       },
-      "price_diff": 10600
+      "price_diff": 1000
     },
     {
       "series": "iPhone 17",
       "model": "iPhone 17 Pro",
       "capacity": "256G",
-      "total_count": 693,
+      "total_count": 697,
       "sold_count": 265,
-      "sold_ratio": 38.2,
+      "sold_ratio": 38.0,
       "sold_stats": {
         "count": 265,
         "min": 27000,
@@ -8750,25 +8898,25 @@
         "p75": 36000
       },
       "active_stats": {
-        "count": 408,
-        "min": 27000,
+        "count": 412,
+        "min": 26300,
         "max": 37900,
-        "avg": 34388,
+        "avg": 34321,
         "median": 35800,
         "mode": 36000,
-        "lowest10_avg": 27550,
-        "p25": 33000,
+        "lowest10_avg": 27080,
+        "p25": 32874,
         "p75": 36200
       },
       "total_stats": {
-        "count": 693,
-        "min": 27000,
+        "count": 697,
+        "min": 26300,
         "max": 40990,
-        "avg": 34333,
+        "avg": 34294,
         "median": 35800,
         "mode": 36000,
-        "lowest10_avg": 27150,
-        "p25": 32999,
+        "lowest10_avg": 26830,
+        "p25": 32500,
         "p75": 36000
       },
       "latest_sold": {
@@ -8777,11 +8925,11 @@
         "id": "M.1794937059.A.FA7"
       },
       "latest_active": {
-        "price": 29000,
+        "price": 30500,
         "date": "2026-11-26",
-        "id": "M.1795624135.A.510"
+        "id": "M.1795692237.A.622"
       },
-      "price_diff": 1000
+      "price_diff": 2500
     },
     {
       "series": "iPhone 17",
@@ -8909,10 +9057,10 @@
         "count": 309,
         "min": 30500,
         "max": 43900,
-        "avg": 38786,
+        "avg": 38784,
         "median": 40100,
         "mode": 41000,
-        "lowest10_avg": 31050,
+        "lowest10_avg": 31000,
         "p25": 37500,
         "p75": 41000
       },
@@ -8920,7 +9068,7 @@
         "count": 510,
         "min": 29000,
         "max": 43900,
-        "avg": 38478,
+        "avg": 38477,
         "median": 40000,
         "mode": 41000,
         "lowest10_avg": 30300,
@@ -8933,19 +9081,19 @@
         "id": "M.1795335543.A.178"
       },
       "latest_active": {
-        "price": 31500,
-        "date": "2026-11-25",
-        "id": "M.1795582320.A.A39"
+        "price": 31000,
+        "date": "2026-11-26",
+        "id": "M.1795704467.A.9BC"
       },
-      "price_diff": 1500
+      "price_diff": 1000
     },
     {
       "series": "iPhone 17",
       "model": "iPhone 17 Pro Max",
       "capacity": "512G",
-      "total_count": 135,
+      "total_count": 137,
       "sold_count": 57,
-      "sold_ratio": 42.2,
+      "sold_ratio": 41.6,
       "sold_stats": {
         "count": 57,
         "min": 36000,
@@ -8958,24 +9106,24 @@
         "p75": 46500
       },
       "active_stats": {
-        "count": 75,
+        "count": 77,
         "min": 34500,
         "max": 51900,
-        "avg": 42851,
-        "median": 44500,
+        "avg": 42679,
+        "median": 43500,
         "mode": 47000,
-        "lowest10_avg": 35980,
-        "p25": 38250,
+        "lowest10_avg": 35780,
+        "p25": 38000,
         "p75": 47000
       },
       "total_stats": {
-        "count": 135,
+        "count": 137,
         "min": 34500,
         "max": 51900,
-        "avg": 42727,
-        "median": 43500,
+        "avg": 42633,
+        "median": 43000,
         "mode": 47000,
-        "lowest10_avg": 35800,
+        "lowest10_avg": 35630,
         "p25": 38500,
         "p75": 46900
       },
@@ -8985,11 +9133,11 @@
         "id": "M.1794981811.A.514"
       },
       "latest_active": {
-        "price": 44900,
+        "price": 37500,
         "date": "2026-11-26",
-        "id": "M.1795687201.A.4B7"
+        "id": "M.1795699616.A.115"
       },
-      "price_diff": 8100
+      "price_diff": 700
     },
     {
       "series": "iPhone 17",
@@ -9411,9 +9559,9 @@
       "series": "iPhone 16",
       "model": "iPhone 16 Pro",
       "capacity": "128G",
-      "total_count": 353,
+      "total_count": 354,
       "sold_count": 123,
-      "sold_ratio": 34.8,
+      "sold_ratio": 34.7,
       "sold_stats": {
         "count": 123,
         "min": 15000,
@@ -9426,10 +9574,10 @@
         "p75": 31300
       },
       "active_stats": {
-        "count": 226,
+        "count": 227,
         "min": 17500,
         "max": 34000,
-        "avg": 25577,
+        "avg": 25543,
         "median": 24000,
         "mode": 23000,
         "lowest10_avg": 17950,
@@ -9437,10 +9585,10 @@
         "p75": 32000
       },
       "total_stats": {
-        "count": 353,
+        "count": 354,
         "min": 15000,
         "max": 36900,
-        "avg": 25523,
+        "avg": 25502,
         "median": 24000,
         "mode": 20000,
         "lowest10_avg": 17350,
@@ -9455,7 +9603,7 @@
       "latest_active": {
         "price": 18000,
         "date": "2026-11-26",
-        "id": "M.1795669998.A.73F"
+        "id": "M.1795694069.A.FF4"
       },
       "price_diff": -500
     },
@@ -9515,9 +9663,9 @@
       "series": "iPhone 16",
       "model": "iPhone 16 Pro",
       "capacity": "512G",
-      "total_count": 165,
+      "total_count": 160,
       "sold_count": 68,
-      "sold_ratio": 41.2,
+      "sold_ratio": 42.5,
       "sold_stats": {
         "count": 68,
         "min": 22000,
@@ -9530,26 +9678,26 @@
         "p75": 29625
       },
       "active_stats": {
-        "count": 94,
-        "min": 21500,
-        "max": 46500,
-        "avg": 31168,
-        "median": 29000,
+        "count": 89,
+        "min": 19500,
+        "max": 44300,
+        "avg": 29796,
+        "median": 28000,
         "mode": 25000,
-        "lowest10_avg": 22900,
+        "lowest10_avg": 22150,
         "p25": 25000,
-        "p75": 34250
+        "p75": 31000
       },
       "total_stats": {
-        "count": 165,
-        "min": 21500,
-        "max": 46500,
-        "avg": 30220,
-        "median": 29000,
+        "count": 160,
+        "min": 19500,
+        "max": 45000,
+        "avg": 29427,
+        "median": 28250,
         "mode": 25000,
-        "lowest10_avg": 22550,
-        "p25": 26000,
-        "p75": 31000
+        "lowest10_avg": 22000,
+        "p25": 25000,
+        "p75": 30125
       },
       "latest_sold": {
         "price": 23000,
@@ -9557,11 +9705,11 @@
         "id": "M.1791789835.A.4AF"
       },
       "latest_active": {
-        "price": 21500,
-        "date": "2026-11-25",
-        "id": "M.1795595927.A.36B"
+        "price": 19500,
+        "date": "2026-11-26",
+        "id": "M.1795698235.A.1B6"
       },
-      "price_diff": -1500
+      "price_diff": -3500
     },
     {
       "series": "iPhone 16",
@@ -9619,9 +9767,9 @@
       "series": "iPhone 16",
       "model": "iPhone 16 Pro Max",
       "capacity": "256G",
-      "total_count": 846,
+      "total_count": 847,
       "sold_count": 356,
-      "sold_ratio": 42.1,
+      "sold_ratio": 42.0,
       "sold_stats": {
         "count": 356,
         "min": 20000,
@@ -9634,24 +9782,24 @@
         "p75": 38562
       },
       "active_stats": {
-        "count": 483,
+        "count": 484,
         "min": 20000,
         "max": 43500,
-        "avg": 33374,
+        "avg": 33349,
         "median": 31500,
         "mode": 30000,
-        "lowest10_avg": 21650,
+        "lowest10_avg": 21500,
         "p25": 28500,
         "p75": 39500
       },
       "total_stats": {
-        "count": 846,
+        "count": 847,
         "min": 20000,
         "max": 44900,
-        "avg": 32940,
+        "avg": 32926,
         "median": 31000,
         "mode": 30000,
-        "lowest10_avg": 20700,
+        "lowest10_avg": 20650,
         "p25": 28000,
         "p75": 39100
       },
@@ -9661,11 +9809,11 @@
         "id": "M.1795252008.A.F58"
       },
       "latest_active": {
-        "price": 21000,
+        "price": 21500,
         "date": "2026-11-26",
-        "id": "M.1795663922.A.FC3"
+        "id": "M.1795705378.A.F2A"
       },
-      "price_diff": 0
+      "price_diff": 500
     },
     {
       "series": "iPhone 16",
@@ -10139,17 +10287,17 @@
       "series": "iPhone 15",
       "model": "iPhone 15 Pro",
       "capacity": "256G",
-      "total_count": 672,
-      "sold_count": 292,
+      "total_count": 673,
+      "sold_count": 293,
       "sold_ratio": 43.5,
       "sold_stats": {
-        "count": 292,
+        "count": 293,
         "min": 11500,
         "max": 27000,
-        "avg": 18741,
+        "avg": 18725,
         "median": 18000,
         "mode": 17000,
-        "lowest10_avg": 13320,
+        "lowest10_avg": 13300,
         "p25": 16500,
         "p75": 20500
       },
@@ -10165,10 +10313,10 @@
         "p75": 20000
       },
       "total_stats": {
-        "count": 672,
+        "count": 673,
         "min": 11000,
         "max": 27000,
-        "avg": 18565,
+        "avg": 18558,
         "median": 18000,
         "mode": 17000,
         "lowest10_avg": 12200,
@@ -10176,16 +10324,16 @@
         "p75": 20000
       },
       "latest_sold": {
-        "price": 13999,
-        "date": "2026-11-14",
-        "id": "M.1794600096.A.0E8"
+        "price": 14000,
+        "date": "2026-11-26",
+        "id": "M.1795702735.A.043"
       },
       "latest_active": {
         "price": 14500,
         "date": "2026-11-25",
         "id": "M.1795542961.A.45B"
       },
-      "price_diff": 501
+      "price_diff": 500
     },
     {
       "series": "iPhone 15",
@@ -10451,53 +10599,53 @@
       "series": "iPhone 14",
       "model": "iPhone 14",
       "capacity": "128G",
-      "total_count": 162,
-      "sold_count": 68,
-      "sold_ratio": 42.0,
+      "total_count": 163,
+      "sold_count": 69,
+      "sold_ratio": 42.3,
       "sold_stats": {
-        "count": 68,
+        "count": 69,
         "min": 6500,
         "max": 13000,
-        "avg": 9397,
+        "avg": 9362,
         "median": 8500,
         "mode": 8200,
-        "lowest10_avg": 7230,
+        "lowest10_avg": 7180,
         "p25": 8000,
-        "p75": 10625
+        "p75": 10500
       },
       "active_stats": {
         "count": 89,
-        "min": 6500,
+        "min": 6000,
         "max": 14000,
-        "avg": 9310,
+        "avg": 9299,
         "median": 8800,
         "mode": 8000,
-        "lowest10_avg": 6850,
+        "lowest10_avg": 6750,
         "p25": 7900,
         "p75": 11000
       },
       "total_stats": {
-        "count": 162,
-        "min": 6500,
+        "count": 163,
+        "min": 6000,
         "max": 14000,
-        "avg": 9357,
+        "avg": 9337,
         "median": 8500,
         "mode": 8000,
-        "lowest10_avg": 6800,
+        "lowest10_avg": 6700,
         "p25": 8000,
         "p75": 11000
       },
       "latest_sold": {
-        "price": 8500,
-        "date": "2026-10-28",
-        "id": "M.1793189870.A.D5E"
-      },
-      "latest_active": {
         "price": 7000,
         "date": "2026-11-25",
         "id": "M.1795588762.A.CC0"
       },
-      "price_diff": -1500
+      "latest_active": {
+        "price": 6000,
+        "date": "2026-11-26",
+        "id": "M.1795693204.A.148"
+      },
+      "price_diff": -1000
     },
     {
       "series": "iPhone 14",
@@ -11023,9 +11171,9 @@
       "series": "iPhone 14",
       "model": "iPhone 14 Pro Max",
       "capacity": "256G",
-      "total_count": 297,
+      "total_count": 298,
       "sold_count": 133,
-      "sold_ratio": 44.8,
+      "sold_ratio": 44.6,
       "sold_stats": {
         "count": 133,
         "min": 11500,
@@ -11038,24 +11186,24 @@
         "p75": 19000
       },
       "active_stats": {
-        "count": 160,
+        "count": 161,
         "min": 11000,
         "max": 25000,
-        "avg": 16674,
-        "median": 15900,
+        "avg": 16639,
+        "median": 15800,
         "mode": 17500,
-        "lowest10_avg": 12350,
+        "lowest10_avg": 12150,
         "p25": 14500,
         "p75": 19000
       },
       "total_stats": {
-        "count": 297,
+        "count": 298,
         "min": 11000,
         "max": 25000,
-        "avg": 16520,
+        "avg": 16502,
         "median": 15500,
         "mode": 15000,
-        "lowest10_avg": 12050,
+        "lowest10_avg": 11850,
         "p25": 14500,
         "p75": 19000
       },
@@ -11065,11 +11213,11 @@
         "id": "M.1795433251.A.20E"
       },
       "latest_active": {
-        "price": 14000,
-        "date": "2026-11-22",
-        "id": "M.1795354403.A.63A"
+        "price": 11000,
+        "date": "2026-11-26",
+        "id": "M.1795705378.A.F2A"
       },
-      "price_diff": 0
+      "price_diff": -3000
     },
     {
       "series": "iPhone 14",
@@ -12099,6 +12247,272 @@
   },
   "items": [
     {
+      "id": "M.1795705378.A.F2A",
+      "device_type": "iphone",
+      "series": "iPhone 16",
+      "model": "iPhone 16 Pro Max",
+      "capacity": "256G",
+      "price": 21500,
+      "status": "販售中",
+      "location": "北竹",
+      "battery": null,
+      "warranty": "已過保",
+      "date": "2026-11-26",
+      "title": "[販售] 北竹 iPhone 14/16 pro max 256g 紫/灰",
+      "url": "https://www.ptt.cc/bbs/MacShop/M.1795705378.A.F2A.html",
+      "raw_price": "21500",
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
+    },
+    {
+      "id": "M.1795705378.A.F2A",
+      "device_type": "iphone",
+      "series": "iPhone 14",
+      "model": "iPhone 14 Pro Max",
+      "capacity": "256G",
+      "price": 11000,
+      "status": "販售中",
+      "location": "北竹",
+      "battery": null,
+      "warranty": "已過保",
+      "date": "2026-11-26",
+      "title": "[販售] 北竹 iPhone 14/16 pro max 256g 紫/灰",
+      "url": "https://www.ptt.cc/bbs/MacShop/M.1795705378.A.F2A.html",
+      "raw_price": "11000",
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
+    },
+    {
+      "id": "M.1795704467.A.9BC",
+      "device_type": "iphone",
+      "series": "iPhone 17",
+      "model": "iPhone 17 Pro Max",
+      "capacity": "256G",
+      "price": 31000,
+      "status": "販售中",
+      "location": "雙北",
+      "battery": null,
+      "warranty": "已過保",
+      "date": "2026-11-26",
+      "title": "[販售] 雙北 iphone 17promax 15plus 12 promax",
+      "url": "https://www.ptt.cc/bbs/MacShop/M.1795704467.A.9BC.html",
+      "raw_price": "31000",
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
+    },
+    {
+      "id": "M.1795702735.A.043",
+      "device_type": "iphone",
+      "series": "iPhone 15",
+      "model": "iPhone 15 Pro",
+      "capacity": "256G",
+      "price": 14000,
+      "status": "已售出",
+      "location": "雙北",
+      "battery": 84,
+      "warranty": "已過保",
+      "date": "2026-11-26",
+      "title": "[販售] 雙北 iPhone 15 Pro 256G 白色鈦",
+      "url": "https://www.ptt.cc/bbs/MacShop/M.1795702735.A.043.html",
+      "raw_price": "- iPhone 15 Pro：$14,000（暫售出）",
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
+    },
+    {
+      "id": "M.1795700459.A.6C0",
+      "device_type": "ipad_mini",
+      "series": "iPad mini 6",
+      "model": "iPad mini 6 (WiFi)",
+      "capacity": "64G",
+      "price": 10000,
+      "status": "販售中",
+      "location": "台北",
+      "battery": 87,
+      "warranty": "已過保",
+      "date": "2026-11-26",
+      "title": "[販售] 台北 iPad mini 6 64GB WiFi 太空灰+App",
+      "url": "https://www.ptt.cc/bbs/MacShop/M.1795700459.A.6C0.html",
+      "raw_price": "合售10,000",
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
+    },
+    {
+      "id": "M.1795699616.A.115",
+      "device_type": "iphone",
+      "series": "iPhone 17",
+      "model": "iPhone 17 Pro Max",
+      "capacity": "512G",
+      "price": 37500,
+      "status": "販售中",
+      "location": "雙北",
+      "battery": null,
+      "warranty": "保內 (2026/12)",
+      "date": "2026-11-26",
+      "title": "[販售] 雙北 iPhone 17 Pro Max 512G 銀",
+      "url": "https://www.ptt.cc/bbs/MacShop/M.1795699616.A.115.html",
+      "raw_price": "37500 (暫不議價)",
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
+    },
+    {
+      "id": "M.1795698235.A.1B6",
+      "device_type": "iphone",
+      "series": "iPhone 16",
+      "model": "iPhone 16 Pro",
+      "capacity": "512G",
+      "price": 19500,
+      "status": "販售中",
+      "location": "高雄",
+      "battery": null,
+      "warranty": "已過保",
+      "date": "2026-11-26",
+      "title": "[販售] 高雄 iPhone 16 Pro 沙漠金 512G x2",
+      "url": "https://www.ptt.cc/bbs/MacShop/M.1795698235.A.1B6.html",
+      "raw_price": "NTD：19500",
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
+    },
+    {
+      "id": "M.1795698235.A.1B6",
+      "device_type": "iphone",
+      "series": "iPhone 16",
+      "model": "iPhone 16 Pro",
+      "capacity": "512G",
+      "price": 21000,
+      "status": "販售中",
+      "location": "高雄",
+      "battery": null,
+      "warranty": "已過保",
+      "date": "2026-11-26",
+      "title": "[販售] 高雄 iPhone 16 Pro 沙漠金 512G x2",
+      "url": "https://www.ptt.cc/bbs/MacShop/M.1795698235.A.1B6.html",
+      "raw_price": "NTD：21000",
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
+    },
+    {
+      "id": "M.1795697265.A.450",
+      "device_type": "iphone",
+      "series": "iPhone 17",
+      "model": "iPhone 17 Pro Max",
+      "capacity": "512G",
+      "price": 35000,
+      "status": "販售中",
+      "location": "台南",
+      "battery": 94,
+      "warranty": "保內 (2026/11)",
+      "date": "2026-11-26",
+      "title": "[販售] 台南 iPhone 17 pro max 512g 橙",
+      "url": "https://www.ptt.cc/bbs/MacShop/M.1795697265.A.450.html",
+      "raw_price": "$35000",
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
+    },
+    {
+      "id": "M.1795695711.A.1FC",
+      "device_type": "iphone",
+      "series": "iPhone 17",
+      "model": "iPhone 17",
+      "capacity": "512G",
+      "price": 26000,
+      "status": "販售中",
+      "location": "全國",
+      "battery": null,
+      "warranty": "已過保",
+      "date": "2026-11-26",
+      "title": "[販售] 台北iPhone 17 512g 白色",
+      "url": "https://www.ptt.cc/bbs/MacShop/M.1795695711.A.1FC.html",
+      "raw_price": "$26000",
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
+    },
+    {
+      "id": "M.1795694069.A.FF4",
+      "device_type": "iphone",
+      "series": "iPhone 16",
+      "model": "iPhone 16 Pro",
+      "capacity": "128G",
+      "price": 18000,
+      "status": "販售中",
+      "location": "雲林",
+      "battery": 85,
+      "warranty": "已過保",
+      "date": "2026-11-26",
+      "title": "[販售] 雲林 iPhone 16 pro 128g 鈦",
+      "url": "https://www.ptt.cc/bbs/MacShop/M.1795694069.A.FF4.html",
+      "raw_price": "18000元",
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
+    },
+    {
+      "id": "M.1795693204.A.148",
+      "device_type": "iphone",
+      "series": "iPhone 14",
+      "model": "iPhone 14",
+      "capacity": "128G",
+      "price": 6000,
+      "status": "販售中",
+      "location": "台北",
+      "battery": null,
+      "warranty": "已過保",
+      "date": "2026-11-26",
+      "title": "[販售] 台北 iPhone 14 128g 藍色",
+      "url": "https://www.ptt.cc/bbs/MacShop/M.1795693204.A.148.html",
+      "raw_price": "6000",
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
+    },
+    {
+      "id": "M.1795692237.A.622",
+      "device_type": "iphone",
+      "series": "iPhone 17",
+      "model": "iPhone 17 Pro",
+      "capacity": "256G",
+      "price": 30500,
+      "status": "販售中",
+      "location": "雙北",
+      "battery": 97,
+      "warranty": "保內 (2027/02)",
+      "date": "2026-11-26",
+      "title": "[販售] 雙北 iPhone 17 Pro 銀色 256GB",
+      "url": "https://www.ptt.cc/bbs/MacShop/M.1795692237.A.622.html",
+      "raw_price": "30,500",
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
+    },
+    {
+      "id": "M.1795692113.A.122",
+      "device_type": "ipad_mini",
+      "series": "iPad mini 7",
+      "model": "iPad mini 7 (Cellular)",
+      "capacity": "128G",
+      "price": 15000,
+      "status": "販售中",
+      "location": "中彰",
+      "battery": null,
+      "warranty": "已過保",
+      "date": "2026-11-26",
+      "title": "[販售] 中彰 ipad mini 7 128g lte",
+      "url": "https://www.ptt.cc/bbs/MacShop/M.1795692113.A.122.html",
+      "raw_price": "15000",
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
+    },
+    {
       "id": "M.1795687201.A.4B7",
       "device_type": "iphone",
       "series": "iPhone 17",
@@ -12294,9 +12708,9 @@
       "id": "M.1795625756.A.048",
       "device_type": "iphone",
       "series": "iPhone 18",
-      "model": "iPhone 18 Pro",
-      "capacity": "256G",
-      "price": 40500,
+      "model": "iPhone 18 Pro Max",
+      "capacity": "512G",
+      "price": 52500,
       "status": "販售中",
       "location": "雙北",
       "battery": null,
@@ -12304,7 +12718,7 @@
       "date": "2026-11-26",
       "title": "[販售] 雙北 iphone 18 pro 256G冰川藍",
       "url": "https://www.ptt.cc/bbs/MacShop/M.1795625756.A.048.html",
-      "raw_price": "40500",
+      "raw_price": "52500",
       "quality_score": 100,
       "quality_flags": [],
       "market_eligible": true
@@ -12400,6 +12814,25 @@
       "title": "[販售] 雙北 iPhone 16 128g 白",
       "url": "https://www.ptt.cc/bbs/MacShop/M.1795616584.A.4AB.html",
       "raw_price": "14,000",
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
+    },
+    {
+      "id": "M.1795614645.A.A8D",
+      "device_type": "ipad_mini",
+      "series": "iPad mini 8",
+      "model": "iPad mini 8 (WiFi)",
+      "capacity": "128G",
+      "price": 20000,
+      "status": "已售出",
+      "location": "宜蘭",
+      "battery": null,
+      "warranty": "保內 (2027/11)",
+      "date": "2026-11-25",
+      "title": "[販售] 宜蘭 iPad mini 8 黑/128/WIFI",
+      "url": "https://www.ptt.cc/bbs/MacShop/M.1795614645.A.A8D.html",
+      "raw_price": "20000",
       "quality_score": 100,
       "quality_flags": [],
       "market_eligible": true
@@ -12643,7 +13076,7 @@
       "model": "iPhone 14",
       "capacity": "128G",
       "price": 7000,
-      "status": "販售中",
+      "status": "已售出",
       "location": "iphone",
       "battery": 77,
       "warranty": "已過保",
@@ -13035,11 +13468,9 @@
       "title": "[販售] 雙北桃園 iPhone 17 Pro 256G 銀色",
       "url": "https://www.ptt.cc/bbs/MacShop/M.1795524248.A.6C8.html",
       "raw_price": "$26300",
-      "quality_score": 75,
-      "quality_flags": [
-        "價格疑似離群"
-      ],
-      "market_eligible": false
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
     },
     {
       "id": "M.1795523768.A.2EC",
@@ -15109,6 +15540,25 @@
       "market_eligible": true
     },
     {
+      "id": "M.1795251301.A.E76",
+      "device_type": "ipad_mini",
+      "series": "iPad mini 8",
+      "model": "iPad mini 8 (WiFi)",
+      "capacity": "128G",
+      "price": 20900,
+      "status": "販售中",
+      "location": "高雄",
+      "battery": null,
+      "warranty": "已過保",
+      "date": "2026-11-21",
+      "title": "[販售] 高雄 iPad mini 8 128GB 午夜黑",
+      "url": "https://www.ptt.cc/bbs/MacShop/M.1795251301.A.E76.html",
+      "raw_price": "20900元",
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
+    },
+    {
       "id": "M.1795247294.A.923",
       "device_type": "iphone",
       "series": "iPhone 17",
@@ -15180,6 +15630,25 @@
       "title": "[販售] 新北 二手iphone 14 pro 128G 紫色",
       "url": "https://www.ptt.cc/bbs/MacShop/M.1795245072.A.AA8.html",
       "raw_price": "9500",
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
+    },
+    {
+      "id": "M.1795241768.A.B6D",
+      "device_type": "ipad_mini",
+      "series": "iPad mini 8",
+      "model": "iPad mini 8 (WiFi)",
+      "capacity": "256G",
+      "price": 23900,
+      "status": "販售中",
+      "location": "Apple",
+      "battery": null,
+      "warranty": "保內 (2027/11)",
+      "date": "2026-11-21",
+      "title": "[販售] Apple iPad mini 8 256G 午夜色",
+      "url": "https://www.ptt.cc/bbs/MacShop/M.1795241768.A.B6D.html",
+      "raw_price": "23900",
       "quality_score": 100,
       "quality_flags": [],
       "market_eligible": true
@@ -15545,6 +16014,25 @@
       "title": "[販售] 高屏iPhone 17 Pro 256 橘色",
       "url": "https://www.ptt.cc/bbs/MacShop/M.1795195802.A.899.html",
       "raw_price": "28000",
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
+    },
+    {
+      "id": "M.1795187129.A.566",
+      "device_type": "ipad_mini",
+      "series": "iPad mini 8",
+      "model": "iPad mini 8 (WiFi)",
+      "capacity": "128G",
+      "price": 20000,
+      "status": "販售中",
+      "location": "台南",
+      "battery": null,
+      "warranty": "已過保",
+      "date": "2026-11-20",
+      "title": "[販售] 台南 iPad mini 8 128GB 午夜黑",
+      "url": "https://www.ptt.cc/bbs/MacShop/M.1795187129.A.566.html",
+      "raw_price": "20000元",
       "quality_score": 100,
       "quality_flags": [],
       "market_eligible": true
@@ -17164,6 +17652,25 @@
       "market_eligible": false
     },
     {
+      "id": "M.1794991965.A.C60",
+      "device_type": "ipad_mini",
+      "series": "iPad mini 8",
+      "model": "iPad mini 8 (WiFi)",
+      "capacity": "128G",
+      "price": 21000,
+      "status": "販售中",
+      "location": "台北",
+      "battery": null,
+      "warranty": "全新/未開通",
+      "date": "2026-11-18",
+      "title": "[販售] 台北 iPad mini 8 128g 星光色",
+      "url": "https://www.ptt.cc/bbs/MacShop/M.1794991965.A.C60.html",
+      "raw_price": "21,000元",
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
+    },
+    {
       "id": "M.1794988829.A.798",
       "device_type": "iphone",
       "series": "iPhone 17",
@@ -17620,25 +18127,6 @@
       "market_eligible": true
     },
     {
-      "id": "M.1794917078.A.D82",
-      "device_type": "iphone",
-      "series": "iPhone 17",
-      "model": "iPhone 17 Pro Max",
-      "capacity": "256G",
-      "price": 31500,
-      "status": "販售中",
-      "location": "台南",
-      "battery": null,
-      "warranty": "保內 (2026/11)",
-      "date": "2026-11-17",
-      "title": "[販售] 台南 iPhone 17 Pro Max 256G 橘",
-      "url": "https://www.ptt.cc/bbs/MacShop/M.1794917078.A.D82.html",
-      "raw_price": "31500",
-      "quality_score": 100,
-      "quality_flags": [],
-      "market_eligible": true
-    },
-    {
       "id": "M.1794916885.A.5EE",
       "device_type": "iphone",
       "series": "iPhone 18",
@@ -18078,6 +18566,25 @@
         "價格疑似離群"
       ],
       "market_eligible": false
+    },
+    {
+      "id": "M.1794856051.A.F28",
+      "device_type": "ipad_mini",
+      "series": "iPad mini 8",
+      "model": "iPad mini 8 (Cellular)",
+      "capacity": "256G",
+      "price": 30000,
+      "status": "販售中",
+      "location": "雙北",
+      "battery": null,
+      "warranty": "保內 (2027/11)",
+      "date": "2026-11-17",
+      "title": "[販售] 雙北 ipad mini 8 (a20 pro) 256gb LTE",
+      "url": "https://www.ptt.cc/bbs/MacShop/M.1794856051.A.F28.html",
+      "raw_price": "30000 配合時間地點-500",
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
     },
     {
       "id": "M.1794848206.A.17C",
@@ -18629,6 +19136,25 @@
       "title": "[販售] 竹北 降價賣 全新iPhone 17 Pro Max 512",
       "url": "https://www.ptt.cc/bbs/MacShop/M.1794811428.A.56F.html",
       "raw_price": "46500",
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
+    },
+    {
+      "id": "M.1794810497.A.5FB",
+      "device_type": "ipad_mini",
+      "series": "iPad mini 8",
+      "model": "iPad mini 8 (WiFi)",
+      "capacity": "128G",
+      "price": 21000,
+      "status": "販售中",
+      "location": "台中",
+      "battery": null,
+      "warranty": "全新/未開通",
+      "date": "2026-11-16",
+      "title": "[販售] 台中 IPad mini 8 128g 星光色",
+      "url": "https://www.ptt.cc/bbs/MacShop/M.1794810497.A.5FB.html",
+      "raw_price": "21000",
       "quality_score": 100,
       "quality_flags": [],
       "market_eligible": true
@@ -20968,6 +21494,27 @@
       "market_eligible": true
     },
     {
+      "id": "M.1794544659.A.652",
+      "device_type": "ipad_mini",
+      "series": "iPad mini 8",
+      "model": "iPad mini 8 (WiFi)",
+      "capacity": "128G",
+      "price": 21500,
+      "status": "販售中",
+      "location": "雙北",
+      "battery": null,
+      "warranty": "已過保",
+      "date": "2026-11-13",
+      "title": "[販售] 雙北 IPad mini 8 128g 太空灰",
+      "url": "https://www.ptt.cc/bbs/MacShop/M.1794544659.A.652.html",
+      "raw_price": "21500 配合地點板橋面交 21000",
+      "quality_score": 75,
+      "quality_flags": [
+        "價格欄含多個金額"
+      ],
+      "market_eligible": false
+    },
+    {
       "id": "M.1794543217.A.E81",
       "device_type": "iphone",
       "series": "iPhone 18",
@@ -21659,6 +22206,25 @@
       "title": "[販售] 竹北 iPhone 18 pro max 256G 銀",
       "url": "https://www.ptt.cc/bbs/MacShop/M.1794464016.A.1A9.html",
       "raw_price": "45200",
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
+    },
+    {
+      "id": "M.1794463983.A.EAC",
+      "device_type": "ipad_mini",
+      "series": "iPad mini 8",
+      "model": "iPad mini 8 (WiFi)",
+      "capacity": "128G",
+      "price": 20500,
+      "status": "已售出",
+      "location": "台中",
+      "battery": null,
+      "warranty": "已過保",
+      "date": "2026-11-12",
+      "title": "[販售] 台中 iPad mini 8 WiFi 128g(已售出)",
+      "url": "https://www.ptt.cc/bbs/MacShop/M.1794463983.A.EAC.html",
+      "raw_price": "20500 (已售出)",
       "quality_score": 100,
       "quality_flags": [],
       "market_eligible": true
@@ -29297,11 +29863,9 @@
       "title": "[販售] 台北 iPhone 17 pro 256G 橘色",
       "url": "https://www.ptt.cc/bbs/MacShop/M.1793540957.A.FB8.html",
       "raw_price": "26500",
-      "quality_score": 75,
-      "quality_flags": [
-        "價格疑似離群"
-      ],
-      "market_eligible": false
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
     },
     {
       "id": "M.1793540433.A.459",
@@ -31069,11 +31633,9 @@
       "title": "[販售] 台南 iPhone 17 Pro 256G 銀色",
       "url": "https://www.ptt.cc/bbs/MacShop/M.1793427852.A.A10.html",
       "raw_price": "26500",
-      "quality_score": 75,
-      "quality_flags": [
-        "價格疑似離群"
-      ],
-      "market_eligible": false
+      "quality_score": 100,
+      "quality_flags": [],
+      "market_eligible": true
     },
     {
       "id": "M.1793426680.A.5E2",
@@ -247459,9 +248021,11 @@
       "title": "[販售] 南台灣 iPhone 16 pro512 G沙漠金",
       "url": "https://www.ptt.cc/bbs/MacShop/M.1750736298.A.86D.html",
       "raw_price": "46000",
-      "quality_score": 100,
-      "quality_flags": [],
-      "market_eligible": true
+      "quality_score": 75,
+      "quality_flags": [
+        "價格疑似離群"
+      ],
+      "market_eligible": false
     },
     {
       "id": "M.1750734700.A.87F",
@@ -269215,10 +269779,10 @@
     {
       "id": "M.1742371845.A.AB5",
       "device_type": "ipad_mini",
-      "series": "iPad mini 6",
-      "model": "iPad mini 6 (WiFi)",
-      "capacity": "64G",
-      "price": 8500,
+      "series": "iPad mini 8",
+      "model": "iPad mini 8 (WiFi)",
+      "capacity": "未標示",
+      "price": null,
       "status": "暫售",
       "location": "全國",
       "battery": null,
@@ -269227,9 +269791,12 @@
       "title": "[販售] 全國 iPad mini 6 wifi 粉 64G 暫售",
       "url": "https://www.ptt.cc/bbs/MacShop/M.1742371845.A.AB5.html",
       "raw_price": "8500",
-      "quality_score": 100,
-      "quality_flags": [],
-      "market_eligible": true
+      "quality_score": 65,
+      "quality_flags": [
+        "容量規格不符",
+        "價格未辨識"
+      ],
+      "market_eligible": false
     },
     {
       "id": "M.1742363789.A.A65",
@@ -316592,9 +317159,11 @@
       "title": "[販售] 台中 iPhone 16 pro 512g 白色",
       "url": "https://www.ptt.cc/bbs/MacShop/M.1731412835.A.32B.html",
       "raw_price": "$44500",
-      "quality_score": 100,
-      "quality_flags": [],
-      "market_eligible": true
+      "quality_score": 75,
+      "quality_flags": [
+        "價格疑似離群"
+      ],
+      "market_eligible": false
     },
     {
       "id": "M.1731410827.A.BE6",
@@ -316885,9 +317454,11 @@
       "title": "[販售] 台中 iPhone 16 Pro 512G 白",
       "url": "https://www.ptt.cc/bbs/MacShop/M.1731377567.A.316.html",
       "raw_price": "$45800",
-      "quality_score": 100,
-      "quality_flags": [],
-      "market_eligible": true
+      "quality_score": 75,
+      "quality_flags": [
+        "價格疑似離群"
+      ],
+      "market_eligible": false
     },
     {
       "id": "M.1731371912.A.814",
@@ -317314,9 +317885,11 @@
       "title": "[販售] 台北 iphone 16 pro 512g 沙漠色",
       "url": "https://www.ptt.cc/bbs/MacShop/M.1731297992.A.129.html",
       "raw_price": "$45000",
-      "quality_score": 100,
-      "quality_flags": [],
-      "market_eligible": true
+      "quality_score": 75,
+      "quality_flags": [
+        "價格疑似離群"
+      ],
+      "market_eligible": false
     },
     {
       "id": "M.1731297395.A.C68",
@@ -317352,9 +317925,11 @@
       "title": "[販售] 台北 iphone 16 pro 512g 沙漠色",
       "url": "https://www.ptt.cc/bbs/MacShop/M.1731297314.A.D16.html",
       "raw_price": "$45000",
-      "quality_score": 100,
-      "quality_flags": [],
-      "market_eligible": true
+      "quality_score": 75,
+      "quality_flags": [
+        "價格疑似離群"
+      ],
+      "market_eligible": false
     },
     {
       "id": "M.1731294298.A.A61",
@@ -318946,9 +319521,11 @@
       "title": "[販售] 桃園 全新 iPhone 16 Pro 512GB 白色",
       "url": "https://www.ptt.cc/bbs/MacShop/M.1730955623.A.3F9.html",
       "raw_price": "45700",
-      "quality_score": 100,
-      "quality_flags": [],
-      "market_eligible": true
+      "quality_score": 75,
+      "quality_flags": [
+        "價格疑似離群"
+      ],
+      "market_eligible": false
     },
     {
       "id": "M.1730952739.A.FA3",
@@ -320264,9 +320841,11 @@
       "title": "[販售] 雙北 iphone 16 pro 512",
       "url": "https://www.ptt.cc/bbs/MacShop/M.1730700192.A.70C.html",
       "raw_price": "46500",
-      "quality_score": 100,
-      "quality_flags": [],
-      "market_eligible": true
+      "quality_score": 75,
+      "quality_flags": [
+        "價格疑似離群"
+      ],
+      "market_eligible": false
     },
     {
       "id": "M.1730693643.A.9F1",
